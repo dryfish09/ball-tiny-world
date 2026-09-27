@@ -9,7 +9,6 @@ void init() {
     if (!IsWindowReady()) {
         TraceLog(LOG_ERROR, "FATAL: Could not open window");
         std::abort();
-       }
     }
     // init sound:
     InitAudioDevice();
