@@ -1,4 +1,4 @@
-
+#include <cstdlib>
 #include "raylib.h"
 #include "texture.h"
 namespace texture {
@@ -17,9 +17,11 @@ namespace texture {
         // make sure texture loaded by check it
         if (flowerTexture.id == 0) {
             TraceLog(LOG_ERROR, "texture is not available or can't be loaded: flower texture.");
+            std::abort();
         }
         if (ball.id == 0) {
             TraceLog(LOG_ERROR, "texture is not available or can't be loaded: ball texture.");
+            std::abort();
         }
     }
     void loadBg() {
