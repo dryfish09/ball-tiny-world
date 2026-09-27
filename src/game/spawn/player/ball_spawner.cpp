@@ -6,7 +6,7 @@ namespace spawn {
     float ballRadius = 9.5f;
     Vector2 ballPos = {100, 100};
     void spawnBall() {
-        ballPos.x = (int)GetRandomValue(ballRadius, windowX - ballRadius);
-        ballPos.y = (int)GetRandomValue(ballRadius, windowY - ballRadius);
+        ballPos.x = static_cast<int>(GetRandomValue(ballRadius, windowX - ballRadius));
+        ballPos.y = static_cast<int>(GetRandomValue(ballRadius, windowY - ballRadius));
     }
 }
