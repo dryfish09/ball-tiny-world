@@ -26,6 +26,7 @@ namespace texture {
         bg = LoadTexture("src/assets/texture/bg.png");
         if (bg.id == 0) {
             TraceLog(LOG_ERROR, "texture is not available or can't be loaded: background.");
+        }
     }
     void unloadBg() {
         UnloadTexture(bg);
