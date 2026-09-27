@@ -16,17 +16,17 @@ namespace spawn {
         flowerPos4 = {0, 0};
         flowerPos5 = {0, 0};
         flowerPos6 = {0, 0};
-        flowerPos.x = (int)GetRandomValue(flowerRadius, windowX - flowerRadius);
-        flowerPos.y = (int)GetRandomValue(flowerRadius, windowY - flowerRadius);
-        flowerPos2.x = (int)GetRandomValue(flowerRadius, windowX - flowerRadius);
-        flowerPos2.y = (int)GetRandomValue(flowerRadius, windowY - flowerRadius);
-        flowerPos3.x = (int)GetRandomValue(flowerRadius, windowX - flowerRadius);
-        flowerPos3.y = (int)GetRandomValue(flowerRadius, windowY - flowerRadius);
-        flowerPos4.x = (int)GetRandomValue(flowerRadius, windowX - flowerRadius);
-        flowerPos4.y = (int)GetRandomValue(flowerRadius, windowY - flowerRadius);
-        flowerPos5.x = (int)GetRandomValue(flowerRadius, windowX - flowerRadius);
-        flowerPos5.y = (int)GetRandomValue(flowerRadius, windowY - flowerRadius);
-        flowerPos6.x = (int)GetRandomValue(flowerRadius, windowX - flowerRadius);
-        flowerPos6.y = (int)GetRandomValue(flowerRadius, windowY - flowerRadius);
+        flowerPos.x = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
+        flowerPos.y = static_cast<int>(GetRandomValue(flowerRadius, windowY - flowerRadius));
+        flowerPos2.x = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
+        flowerPos2.y = static_cast<int>(GetRandomValue(flowerRadius, windowY - flowerRadius));
+        flowerPos3.x = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
+        flowerPos3.y = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
+        flowerPos4.x = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
+        flowerPos4.y = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
+        flowerPos5.x = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
+        flowerPos5.y = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
+        flowerPos6.x = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
+        flowerPos6.y = static_cast<int>(GetRandomValue(flowerRadius, windowX - flowerRadius));
     }
 }
