@@ -1,4 +1,4 @@
-
+#include <cstdlib>
 #include "raylib.h"
 #include "game/var.h"
 #include "game/sound/sound.h"
@@ -8,6 +8,8 @@ void init() {
     InitWindow(windowX, windowY, "Ball's tiny world 2D");
     if (!IsWindowReady()) {
         TraceLog(LOG_ERROR, "FATAL: Could not open window");
+        std::abort();
+       }
     }
     // init sound:
     InitAudioDevice();
