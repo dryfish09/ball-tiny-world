@@ -20,7 +20,6 @@ namespace texture {
         }
         if (ball.id == 0) {
             TraceLog(LOG_ERROR, "texture is not available or can't be loaded: ball texture.");
-            return 1;
         }
     }
     void loadBg() {
