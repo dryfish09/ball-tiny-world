@@ -16,11 +16,17 @@ namespace texture {
         ball = LoadTexture("src/assets/texture/ball.png");
         // make sure texture loaded by check it
         if (flowerTexture.id == 0) {
-            TraceLog(LOG_ERROR, "texture is not available or can't be loaded.");
+            TraceLog(LOG_ERROR, "texture is not available or can't be loaded: flower texture.");
+        }
+        if (ball.id == 0) {
+            TraceLog(LOG_ERROR, "texture is not available or can't be loaded: ball texture.");
         }
     }
     void loadBg() {
         bg = LoadTexture("src/assets/texture/bg.png");
+        if (bg.id == 0) {
+            TraceLog(LOG_ERROR, "texture is not available or can't be loaded: background.");
+        }
     }
     void unloadBg() {
         UnloadTexture(bg);
