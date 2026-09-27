@@ -8,7 +8,6 @@ void init() {
     InitWindow(windowX, windowY, "Ball's tiny world 2D");
     if (!IsWindowReady()) {
         TraceLog(LOG_ERROR, "FATAL: Could not open window");
-        return 2;
     }
     // init sound:
     InitAudioDevice();
