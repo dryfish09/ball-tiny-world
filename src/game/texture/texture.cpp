@@ -19,7 +19,6 @@ namespace texture {
             TraceLog(LOG_ERROR, "texture is not available or can't be loaded: flower texture.");
             std::abort();
         }
-    }
         if (ball.id == 0) {
             TraceLog(LOG_ERROR, "texture is not available or can't be loaded: ball texture.");
             std::abort();
