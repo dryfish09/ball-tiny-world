@@ -6,7 +6,6 @@
 #include "game/spawn/flower/flower_spawner.h"
 #include "game/spawn/player/ball_spawner.h"
 #include "logic.h"
-using namespace spawn;
 void insertLogic() {
     spawnBall();
     spawnFlower();
@@ -25,71 +24,71 @@ void insertLogic() {
         }
         // move ball with arrows and W, A, S, D
         if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
-            ballPos.x += speed * dt;
+            spawn::ballPos.x += speed * dt;
             // play sound
             sound::playFootstepSound();
         }
         else if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)) {
-            ballPos.x -= speed * dt;
+            spawn::ballPos.x -= speed * dt;
             sound::playFootstepSound();
         }
         else if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
-            ballPos.y += speed * dt;
+            spawn::ballPos.y += speed * dt;
             sound::playFootstepSound();
         }
         else if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {
-            ballPos.y -= speed * dt;
+            spawn::ballPos.y -= speed * dt;
             sound::playFootstepSound();
         }
         // player will move slower when player hold to move
         else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
-            ballPos.x += runSpeed * dt;
+            spawn::ballPos.x += runSpeed * dt;
             sound::playRunSound();
         }
         else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) {
-            ballPos.x -= runSpeed * dt;
+            spawn::ballPos.x -= runSpeed * dt;
             sound::playRunSound();
         }
         else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) {
-            ballPos.y += runSpeed * dt;
+            spawn::ballPos.y += runSpeed * dt;
             sound::playRunSound();
         }
         else if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) {
-            ballPos.y -= runSpeed * dt;
+            spawn::ballPos.y -= runSpeed * dt;
             sound::playRunSound();
         }
         // easter egg for who knows some code
         else if (IsKeyDown(KEY_Y)) {
-            ballPos.y += dashSpeed * dt;
+            spawn::ballPos.y += dashSpeed * dt;
         }
         else if (IsKeyDown(KEY_X)) {
-            ballPos.x += dashSpeed * dt;
+            spawn::ballPos.x += dashSpeed * dt;
         }
         else if (IsKeyDown(KEY_X) && IsKeyDown(KEY_LEFT_SHIFT)) {
-            ballPos.x -= dashSpeed * dt;
+            spawn::ballPos.x -= dashSpeed * dt;
         }
         else if (IsKeyDown(KEY_Y) && IsKeyDown(KEY_LEFT_SHIFT)) {
-            ballPos.y -= dashSpeed * dt;
+            spawn::ballPos.y -= dashSpeed * dt;
         }
         // prevent player go out of screen
         if (ballPos.x - ballRadius <= 0) {
-            ballPos.x = ballRadius;
+            spawn::ballPos.x = ballRadius;
         }
         if (ballPos.x + ballRadius >= windowX) {
-            ballPos.x = windowX - ballRadius;
+            spawn::ballPos.x = windowX - ballRadius;
         }
-        if (ballPos.y - ballRadius <= 0) {
-            ballPos.y = ballRadius;
+        if (spawn::ballPos.y - ballRadius <= 0) {
+            spawn::ballPos.y = ballRadius;
         }
         if (ballPos.y + ballRadius >= windowY) {
-            ballPos.y = windowY - ballRadius;
+            spawn::ballPos.y = windowY - ballRadius;
         }
         BeginDrawing();
         ClearBackground(GREEN);
         // draw background
         texture::drawBackground(texture::bg);
         // draw some circle
-        DrawTextureV(texture::ball, ballPos, WHITE);
+        DrawTextureV(texture::ball, spawn::ballPos, WHITE);
         DrawTextureV(texture::flowerTexture, spawn::flowerPos, WHITE);
         DrawTextureV(texture::flowerTexture, spawn::flowerPos2, WHITE);
         DrawTextureV(texture::flowerTexture, spawn::flowerPos3, WHITE);
