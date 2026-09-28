@@ -366,7 +366,7 @@ jobs:
           BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
           CHANNEL: linux
           ITCH_GAME: ball-tiny-world
-          ITCH_USER: your-itch-username
+          ITCH_USER: dryfish09
           PACKAGE: ballTinyWorld-linux.zip
 
       - name: Upload to itch.io (macOS)
@@ -375,7 +375,7 @@ jobs:
           BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
           CHANNEL: macos
           ITCH_GAME: ball-tiny-world
-          ITCH_USER: your-itch-username
+          ITCH_USER: dryfish09
           PACKAGE: ballTinyWorld-macos.zip
 
       - name: Upload to itch.io (Windows)
@@ -384,5 +384,5 @@ jobs:
           BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
           CHANNEL: windows
           ITCH_GAME: ball-tiny-world
-          ITCH_USER: your-itch-username
+          ITCH_USER: dryfish09
           PACKAGE: ballTinyWorld-windows.zip
