@@ -36,7 +36,7 @@ Use arrow keys or WASD keys on your keyboard to move, you can't move out of scre
 - [x] add sound
 - [x] add more sounds
 - [x] add textures
-- [ ] add more textures
+- [x] add more textures
 - [ ] add modding api
 - [ ] make game chaotic with bugs and fps bellow 10 - CANCELED
 - [ ] delete this repository - CANCELED
