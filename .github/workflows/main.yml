@@ -5,7 +5,7 @@ on:
     branches: 'main'
     paths-ignore:
       - '**.md'
-      - '**/**.md'
+      - '**/**md'
       - 'LICENSE'
       - '.**'
   pull_request:
@@ -59,10 +59,10 @@ jobs:
 
       - name: Cache raylib
         id: cache-raylib
-        uses: actions/cache@v6
+        uses: actions/cache@v4
         with:
           path: ~/raylib-install
-          key: raylib-6.0-linux-x86_64-v7
+          key: raylib-6.0-linux-x86_64-v6
           restore-keys: |
             raylib-6.0-linux-x86_64-
             raylib-6.0-linux-
@@ -123,10 +123,10 @@ jobs:
 
       - name: Cache raylib universal
         id: cache-raylib
-        uses: actions/cache@v6
+        uses: actions/cache@v4
         with:
           path: ~/raylib-install
-          key: raylib-6.0-macos-universal-v7
+          key: raylib-6.0-macos-universal-v6
           restore-keys: |
             raylib-6.0-macos-universal-
             raylib-6.0-macos-
@@ -230,7 +230,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup MSYS2
+      - name: Setup MSYS2 (CLANG64)
         uses: msys2/setup-msys2@v2
         with:
           msystem: CLANG64
@@ -238,19 +238,19 @@ jobs:
           install: >-
             mingw-w64-clang-x86_64-clang
             mingw-w64-clang-x86_64-cmake
+            mingw-w64-clang-x86_64-make
             mingw-w64-clang-x86_64-ninja
-            mingw-w64-clang-x86_64-lld
             git
             zip
 
       - name: Cache raylib
         id: cache-raylib
-        uses: actions/cache@v6
+        uses: actions/cache@v4
         with:
           path: C:\raylib-install
-          key: raylib-6.0-windows-clang-x86_64-v7
+          key: raylib-6.0-windows-clang64-v6
           restore-keys: |
-            raylib-6.0-windows-clang-x86_64-
+            raylib-6.0-windows-clang64-
             raylib-6.0-windows-
 
       - name: Build raylib from source
@@ -260,6 +260,8 @@ jobs:
           cd raylib
           mkdir build && cd build
           cmake -G Ninja \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
             -DBUILD_SHARED_LIBS=OFF \
             -DPLATFORM=Desktop \
             -DCMAKE_BUILD_TYPE=Release \
@@ -278,9 +280,10 @@ jobs:
       - name: Build game
         run: |
           cmake -S . -B build -G Ninja \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH=/c/raylib-install \
-            -DCMAKE_EXE_LINKER_FLAGS="-static"
+            -DCMAKE_PREFIX_PATH=/c/raylib-install
           cmake --build build
           cp build/game.exe ballTinyWorld-windows.exe
           echo "=== build done ==="
@@ -294,6 +297,18 @@ jobs:
             exit 1
           fi
           echo "raylib is static"
+
+      - name: Check DLL dependencies
+        run: |
+          DEPS=$(objdump -p ballTinyWorld-windows.exe | grep "DLL Name:" | awk '{print $3}')
+          echo "$DEPS"
+          for bad in libc++.dll libunwind.dll libwinpthread-1.dll libgcc_s_seh-1.dll libstdc++-6.dll; do
+            if echo "$DEPS" | grep -qi "$bad"; then
+              echo "ERROR: depends on $bad"
+              exit 1
+            fi
+          done
+          echo "No MinGW/Clang runtime DLLs needed"
 
       - name: Package
         run: |
@@ -334,7 +349,7 @@ jobs:
           git tag "${{ needs.prep.outputs.tag }}"
           git push origin "${{ needs.prep.outputs.tag }}"
 
-      - name: Create release
+      - name: Create GitHub release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.prep.outputs.tag }}
@@ -344,3 +359,30 @@ jobs:
             ballTinyWorld-macos.zip
             ballTinyWorld-windows.zip
           generate_release_notes: true
+
+      - name: Upload to itch.io (Linux)
+        uses: yeslayla/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          CHANNEL: linux
+          ITCH_GAME: ball-tiny-world
+          ITCH_USER: your-itch-username
+          PACKAGE: ballTinyWorld-linux.zip
+
+      - name: Upload to itch.io (macOS)
+        uses: yeslayla/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          CHANNEL: macos
+          ITCH_GAME: ball-tiny-world
+          ITCH_USER: your-itch-username
+          PACKAGE: ballTinyWorld-macos.zip
+
+      - name: Upload to itch.io (Windows)
+        uses: yeslayla/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          CHANNEL: windows
+          ITCH_GAME: ball-tiny-world
+          ITCH_USER: your-itch-username
+          PACKAGE: ballTinyWorld-windows.zip
