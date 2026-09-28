@@ -7,8 +7,8 @@
 #include "game/spawn/player/ball_spawner.h"
 #include "logic.h"
 void insertLogic() {
-    spawnBall();
-    spawnFlower();
+    spawn::spawnBall();
+    spawn::spawnFlower();
     // speed: 
     float dt = GetFrameTime();
     float speed = 300.5f;
@@ -75,7 +75,7 @@ void insertLogic() {
             spawn::ballPos.x = spawn::ballRadius;
         }
         if (spawn::ballPos.x + spawn::ballRadius >= windowX) {
-            spawn::ballPos.x = windowX - ballRadius;
+            spawn::ballPos.x = windowX - spawn::ballRadius;
         }
         if (spawn::ballPos.y - spawn::ballRadius <= 0) {
             spawn::ballPos.y = spawn::ballRadius;
