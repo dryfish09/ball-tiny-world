@@ -5,15 +5,18 @@
 #include "game/texture/texture.h"
 #include "game/spawn/flower/flower_spawner.h"
 #include "game/spawn/player/ball_spawner.h"
+#include "game/spawn/chest/chest.h"
 #include "logic.h"
 void insertLogic() {
     spawn::spawnBall();
     spawn::spawnFlower();
+    spawnChest();
     // speed: 
     float dt = GetFrameTime();
     float speed = 300.5f;
     float runSpeed = 240.5f;
     float dashSpeed = 360.0f;
+    bool chestOpened = false;
     // play background music 
     sound::playBgm();
     while (!WindowShouldClose()) {
@@ -70,6 +73,12 @@ void insertLogic() {
         else if (IsKeyDown(KEY_Y) && IsKeyDown(KEY_LEFT_SHIFT)) {
             spawn::ballPos.y -= dashSpeed * dt;
         }
+        if (IsKeyPressed(KEY_E) && spawn::ballPos.x <= chestPos.x || IsKeyPressed(KEY_E) && spawn::ballPos.x >= chestPos.x) {
+            chestOpened = true;
+        }
+        if (IsKeyPressed(KEY_E) && spawn::ballPos.y <= chestPos.y || IsKeyPressed(KEY_E) && spawn::ballPos.y >= chestPos.y) {
+            chestOpened = true;
+        }
         // prevent player go out of screen
         if (spawn::ballPos.x - spawn::ballRadius <= 0) {
             spawn::ballPos.x = spawn::ballRadius;
@@ -95,6 +104,15 @@ void insertLogic() {
         DrawTextureV(texture::flowerTexture, spawn::flowerPos4, WHITE);
         DrawTextureV(texture::flowerTexture, spawn::flowerPos5, WHITE);
         DrawTextureV(texture::flowerTexture, spawn::flowerPos6, WHITE);
+        if (chestOpened) {
+            drawOpenedChest();
+            spawnChest();
+            chestOpened = false;
+            continue;
+        } else {
+            drawChest();
+            continue;
+        }
         DrawText("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
         EndDrawing();
     }
