@@ -59,7 +59,7 @@ jobs:
 
       - name: Cache raylib
         id: cache-raylib
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/raylib-install
           key: raylib-6.0-linux-x86_64-v6
@@ -123,7 +123,7 @@ jobs:
 
       - name: Cache raylib universal
         id: cache-raylib
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/raylib-install
           key: raylib-6.0-macos-universal-v6
@@ -245,7 +245,7 @@ jobs:
 
       - name: Cache raylib
         id: cache-raylib
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: C:\raylib-install
           key: raylib-6.0-windows-clang64-v6
@@ -363,7 +363,7 @@ jobs:
       - name: Upload to itch.io (Linux)
         uses: yeslayla/butler-publish-itchio-action@master
         env:
-          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
           CHANNEL: linux
           ITCH_GAME: ball-tiny-world
           ITCH_USER: your-itch-username
@@ -372,7 +372,7 @@ jobs:
       - name: Upload to itch.io (macOS)
         uses: yeslayla/butler-publish-itchio-action@master
         env:
-          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
           CHANNEL: macos
           ITCH_GAME: ball-tiny-world
           ITCH_USER: your-itch-username
@@ -381,7 +381,7 @@ jobs:
       - name: Upload to itch.io (Windows)
         uses: yeslayla/butler-publish-itchio-action@master
         env:
-          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
           CHANNEL: windows
           ITCH_GAME: ball-tiny-world
           ITCH_USER: your-itch-username
