@@ -59,10 +59,10 @@ jobs:
 
       - name: Cache raylib
         id: cache-raylib
-        uses: actions/cache@v6
+        uses: actions/cache@v4
         with:
           path: ~/raylib-install
-          key: raylib-6.0-linux-x86_64-v6
+          key: raylib-6.0-linux-x86_64-v7
           restore-keys: |
             raylib-6.0-linux-x86_64-
             raylib-6.0-linux-
@@ -123,10 +123,10 @@ jobs:
 
       - name: Cache raylib universal
         id: cache-raylib
-        uses: actions/cache@v6
+        uses: actions/cache@v4
         with:
           path: ~/raylib-install
-          key: raylib-6.0-macos-universal-v6
+          key: raylib-6.0-macos-universal-v7
           restore-keys: |
             raylib-6.0-macos-universal-
             raylib-6.0-macos-
@@ -137,7 +137,6 @@ jobs:
           git clone --depth 1 --branch 6.0 https://github.com/raysan5/raylib.git
           cd raylib
 
-          # Build arm64
           mkdir -p build-arm64 && cd build-arm64
           cmake -DBUILD_SHARED_LIBS=OFF -DPLATFORM=Desktop \
             -DCMAKE_BUILD_TYPE=Release \
@@ -147,7 +146,6 @@ jobs:
           make install
           cd ..
 
-          # Build x86_64
           mkdir -p build-x86_64 && cd build-x86_64
           cmake -DBUILD_SHARED_LIBS=OFF -DPLATFORM=Desktop \
             -DCMAKE_BUILD_TYPE=Release \
@@ -157,7 +155,6 @@ jobs:
           make install
           cd ..
 
-          # Gộp thành universal
           mkdir -p $HOME/raylib-install/lib $HOME/raylib-install/include
           lipo -create \
             $HOME/raylib-arm64/lib/libraylib.a \
@@ -166,7 +163,6 @@ jobs:
           cp -r $HOME/raylib-arm64/include/* $HOME/raylib-install/include/
           cp -r $HOME/raylib-arm64/lib/cmake $HOME/raylib-install/lib/ 2>/dev/null || true
 
-          # Xóa bản arch riêng để tránh nhầm lẫn
           rm -rf $HOME/raylib-arm64 $HOME/raylib-x86_64
 
           echo "=== Universal raylib info ==="
@@ -237,24 +233,24 @@ jobs:
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
         with:
-          msystem: MINGW64
+          msystem: CLANG64
           update: true
           install: >-
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-make
-            mingw-w64-x86_64-ninja
+            mingw-w64-clang-x86_64-clang
+            mingw-w64-clang-x86_64-cmake
+            mingw-w64-clang-x86_64-ninja
+            mingw-w64-clang-x86_64-lld
             git
             zip
 
       - name: Cache raylib
         id: cache-raylib
-        uses: actions/cache@v6
+        uses: actions/cache@v4
         with:
           path: C:\raylib-install
-          key: raylib-6.0-windows-x86_64-v6
+          key: raylib-6.0-windows-clang-x86_64-v7
           restore-keys: |
-            raylib-6.0-windows-x86_64-
+            raylib-6.0-windows-clang-x86_64-
             raylib-6.0-windows-
 
       - name: Build raylib from source
@@ -284,7 +280,7 @@ jobs:
           cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH=/c/raylib-install \
-            -DCMAKE_EXE_LINKER_FLAGS="-static-libgcc -static-libstdc++"
+            -DCMAKE_EXE_LINKER_FLAGS="-static"
           cmake --build build
           cp build/game.exe ballTinyWorld-windows.exe
           echo "=== build done ==="
@@ -338,7 +334,7 @@ jobs:
           git tag "${{ needs.prep.outputs.tag }}"
           git push origin "${{ needs.prep.outputs.tag }}"
 
-      - name: Create GitHub release
+      - name: Create release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.prep.outputs.tag }}
@@ -348,30 +344,3 @@ jobs:
             ballTinyWorld-macos.zip
             ballTinyWorld-windows.zip
           generate_release_notes: true
-
-      - name: Upload to itch.io (Linux)
-        uses: yeslayla/butler-publish-itchio-action@master
-        env:
-          BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
-          CHANNEL: linux
-          ITCH_GAME: ball-tiny-world
-          ITCH_USER: dryfish09
-          PACKAGE: ballTinyWorld-linux.zip
-
-      - name: Upload to itch.io (macOS)
-        uses: yeslayla/butler-publish-itchio-action@master
-        env:
-          BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
-          CHANNEL: macos
-          ITCH_GAME: ball-tiny-world
-          ITCH_USER: dryfish09
-          PACKAGE: ballTinyWorld-macos.zip
-
-      - name: Upload to itch.io (Windows)
-        uses: yeslayla/butler-publish-itchio-action@master
-        env:
-          BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
-          CHANNEL: windows
-          ITCH_GAME: ball-tiny-world
-          ITCH_USER: dryfish09
-          PACKAGE: ballTinyWorld-windows.zip
