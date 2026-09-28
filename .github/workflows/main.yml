@@ -12,6 +12,11 @@ on:
     branches:
       - 'main'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g. 1.0.0)'
+        required: true
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,9 +27,9 @@ permissions:
 
 jobs:
   prep:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     outputs:
-      build_number: ${{ steps.calc.outputs.build_number }}
       tag: ${{ steps.calc.outputs.tag }}
       title: ${{ steps.calc.outputs.title }}
     steps:
@@ -32,19 +37,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Calculate build number and date
+      - name: Build tag and title
         id: calc
         run: |
-          COUNT=$(git tag -l "build-*" | wc -l)
-          NEXT=$((COUNT + 1))
+          VERSION="${{ github.event.inputs.version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION="dev"
+          fi
           DATE_TAG=$(date +%d%m%y)
           DATE_TITLE=$(date +%d-%m-%y)
-          echo "build_number=$NEXT" >> "$GITHUB_OUTPUT"
-          echo "tag=build-$NEXT-$DATE_TAG" >> "$GITHUB_OUTPUT"
-          echo "title=build #$NEXT - $DATE_TITLE" >> "$GITHUB_OUTPUT"
+          echo "tag=ballTinyWorld-$VERSION-$DATE_TAG" >> "$GITHUB_OUTPUT"
+          echo "title=ballTinyWorld v$VERSION - $DATE_TITLE" >> "$GITHUB_OUTPUT"
 
   build-linux:
     needs: prep
+    if: always() && (needs.prep.result == 'success' || needs.prep.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -104,16 +111,18 @@ jobs:
 
       - name: Package
         run: |
-          zip -r ballTinyWorld-linux.zip ballTinyWorld-linux src/assets/ run.sh
-          ls -la ballTinyWorld-linux.zip
+          chmod +x ballTinyWorld-linux run.sh
+          tar -czf ballTinyWorld-linux.tar.gz ballTinyWorld-linux src/assets/ run.sh
+          ls -la ballTinyWorld-linux.tar.gz
 
       - uses: actions/upload-artifact@v7
         with:
           name: ballTinyWorld-linux
-          path: ballTinyWorld-linux.zip
+          path: ballTinyWorld-linux.tar.gz
 
   build-macos:
     needs: prep
+    if: always() && (needs.prep.result == 'success' || needs.prep.result == 'skipped')
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
@@ -223,6 +232,7 @@ jobs:
 
   build-windows:
     needs: prep
+    if: always() && (needs.prep.result == 'success' || needs.prep.result == 'skipped')
     runs-on: windows-latest
     defaults:
       run:
@@ -322,6 +332,70 @@ jobs:
 
   release:
     needs: [prep, build-linux, build-macos, build-windows]
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Download Linux build
+        uses: actions/download-artifact@v8
+        with:
+          name: ballTinyWorld-linux
+
+      - name: Download macOS build
+        uses: actions/download-artifact@v8
+        with:
+          name: ballTinyWorld-macos
+
+      - name: Download Windows build
+        uses: actions/download-artifact@v8
+        with:
+          name: ballTinyWorld-windows
+
+      - name: Create tag
+        run: |
+          git tag "${{ needs.prep.outputs.tag }}"
+          git push origin "${{ needs.prep.outputs.tag }}"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.prep.outputs.tag }}
+          name: ${{ needs.prep.outputs.title }}
+          files: |
+            ballTinyWorld-linux.tar.gz
+            ballTinyWorld-macos.zip
+            ballTinyWorld-windows.zip
+          generate_release_notes: true
+
+      - name: Upload to itch.io (Linux)
+        uses: yeslayla/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
+          CHANNEL: linux
+          ITCH_GAME: ball-tiny-world
+          ITCH_USER: dryfish09
+          PACKAGE: ballTinyWorld-linux.tar.gz
+
+      - name: Upload to itch.io (macOS)
+        uses: yeslayla/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
+          CHANNEL: macos
+          ITCH_GAME: ball-tiny-world
+          ITCH_USER: dryfish09
+          PACKAGE: ballTinyWorld-macos.zip
+
+      - name: Upload to itch.io (Windows)
+        uses: yeslayla/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.ITCH_API }}
+          CHANNEL: windows
+          ITCH_GAME: ball-tiny-world
+          ITCH_USER: dryfish09
+          PACKAGE: ballTinyWorld-windows.ziprep, build-linux, build-macos, build-windows]
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
