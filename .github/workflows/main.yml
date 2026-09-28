@@ -5,7 +5,7 @@ on:
     branches: 'main'
     paths-ignore:
       - '**.md'
-      - '**/**md'
+      - '**/**.md'
       - 'LICENSE'
       - '.**'
   pull_request:
@@ -59,7 +59,7 @@ jobs:
 
       - name: Cache raylib
         id: cache-raylib
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/raylib-install
           key: raylib-6.0-linux-x86_64-v7
@@ -123,7 +123,7 @@ jobs:
 
       - name: Cache raylib universal
         id: cache-raylib
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/raylib-install
           key: raylib-6.0-macos-universal-v7
@@ -245,7 +245,7 @@ jobs:
 
       - name: Cache raylib
         id: cache-raylib
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: C:\raylib-install
           key: raylib-6.0-windows-clang-x86_64-v7
