@@ -71,17 +71,17 @@ void insertLogic() {
             spawn::ballPos.y -= dashSpeed * dt;
         }
         // prevent player go out of screen
-        if (ballPos.x - ballRadius <= 0) {
-            spawn::ballPos.x = ballRadius;
+        if (spawn::ballPos.x - spawn::ballRadius <= 0) {
+            spawn::ballPos.x = spawn::ballRadius;
         }
-        if (ballPos.x + ballRadius >= windowX) {
+        if (spawn::ballPos.x + spawn::ballRadius >= windowX) {
             spawn::ballPos.x = windowX - ballRadius;
         }
-        if (spawn::ballPos.y - ballRadius <= 0) {
-            spawn::ballPos.y = ballRadius;
+        if (spawn::ballPos.y - spawn::ballRadius <= 0) {
+            spawn::ballPos.y = spawn::ballRadius;
         }
-        if (ballPos.y + ballRadius >= windowY) {
-            spawn::ballPos.y = windowY - ballRadius;
+        if (spawn::ballPos.y + spawn::ballRadius >= windowY) {
+            spawn::ballPos.y = windowY - spawn::ballRadius;
         }
         BeginDrawing();
         ClearBackground(GREEN);
