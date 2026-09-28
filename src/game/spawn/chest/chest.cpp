@@ -9,8 +9,8 @@ void spawnChest() {
     chestPos.y = static_cast<float>(GetRandomValue(windowY - chestRange, windowY + chestRange));
 }
 void drawChest() {
-    DrawTextureV(chest, chestPos, WHITE);
+    DrawTextureV(texture::chest, chestPos, WHITE);
 }
 void drawOpenedChest() {
-    DrawTextureV(chest_open, chestPos, WHITE);
+    DrawTextureV(texture::chest_open, chestPos, WHITE);
 }
