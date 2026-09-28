@@ -73,7 +73,10 @@ void insertLogic() {
         else if (IsKeyDown(KEY_Y) && IsKeyDown(KEY_LEFT_SHIFT)) {
             spawn::ballPos.y -= dashSpeed * dt;
         }
-        if (IsKeyPressed(KEY_E) && spawn::ballPos <= chestPos || IsKeyPressed(KEY_E) && spawn::ballPos >= chestPos)) {
+        if (IsKeyPressed(KEY_E) && spawn::ballPos.x <= chestPos.x || IsKeyPressed(KEY_E) && spawn::ballPos.x >= chestPos.x) {
+            chestOpened = true;
+        }
+        if (IsKeyPressed(KEY_E) && spawn::ballPos.y <= chestPos.y || IsKeyPressed(KEY_E) && spawn::ballPos.y >= chestPos.y) {
             chestOpened = true;
         }
         // prevent player go out of screen
