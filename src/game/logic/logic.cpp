@@ -80,7 +80,7 @@ void insertLogic() {
         if (IsKeyPressed(KEY_E) && spawn::ballPos.x <= chestPos.x || IsKeyPressed(KEY_E) && spawn::ballPos.x >= chestPos.x) {
             chestOpened = true;
             despawnCooldown = despawnTimer;
-            spawnCoodown = spawnTimer;
+            spawnCooldown = spawnTimer;
         }
         
         if (IsKeyPressed(KEY_E) && spawn::ballPos.y <= chestPos.y || IsKeyPressed(KEY_E) && spawn::ballPos.y >= chestPos.y) {
