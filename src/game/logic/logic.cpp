@@ -25,6 +25,10 @@ void insertLogic() {
         if(!IsMusicStreamPlaying(sound::bgm)) {
             sound::playBgm();
         }
+        float spawnTimer = 3.0f;
+        float despawnTimer = 5.0f;
+        float despawnCooldown = 0;
+        float spawnCooldown = 0;
         // move ball with arrows and W, A, S, D
         if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
             spawn::ballPos.x += speed * dt;
@@ -75,9 +79,14 @@ void insertLogic() {
         }
         if (IsKeyPressed(KEY_E) && spawn::ballPos.x <= chestPos.x || IsKeyPressed(KEY_E) && spawn::ballPos.x >= chestPos.x) {
             chestOpened = true;
+            despawnCooldown = despawnTimer;
+            spawnCooldown = spawnTimer;
         }
+        
         if (IsKeyPressed(KEY_E) && spawn::ballPos.y <= chestPos.y || IsKeyPressed(KEY_E) && spawn::ballPos.y >= chestPos.y) {
             chestOpened = true;
+            despawnCooldown = despawnTimer;
+            spawnCooldown = spawnTimer;
         }
         // prevent player go out of screen
         if (spawn::ballPos.x - spawn::ballRadius <= 0) {
@@ -105,9 +114,17 @@ void insertLogic() {
         DrawTextureV(texture::flowerTexture, spawn::flowerPos5, WHITE);
         DrawTextureV(texture::flowerTexture, spawn::flowerPos6, WHITE);
         if (chestOpened) {
+            despawnCooldown -= dt;
             drawOpenedChest();
+            if (despawnCooldown == 0) {
+                continue;
+            }
             spawnChest();
-            chestOpened = false;
+            spawnCooldown -= dt;
+            if (spawnCooldown == 0) {
+                spawnCooldown = 0;
+                chestOpened = false;
+            }
             continue;
         } else {
             drawChest();
