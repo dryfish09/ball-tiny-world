@@ -27,9 +27,9 @@ permissions:
 
 jobs:
   prep:
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     outputs:
+      version: ${{ steps.calc.outputs.version }}
       tag: ${{ steps.calc.outputs.tag }}
       title: ${{ steps.calc.outputs.title }}
     steps:
@@ -37,7 +37,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build tag and title
+      - name: Build version, tag, title
         id: calc
         run: |
           VERSION="${{ github.event.inputs.version }}"
@@ -46,12 +46,12 @@ jobs:
           fi
           DATE_TAG=$(date +%d%m%y)
           DATE_TITLE=$(date +%d-%m-%y)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=ballTinyWorld-$VERSION-$DATE_TAG" >> "$GITHUB_OUTPUT"
           echo "title=ballTinyWorld v$VERSION - $DATE_TITLE" >> "$GITHUB_OUTPUT"
 
   build-linux:
     needs: prep
-    if: always() && (needs.prep.result == 'success' || needs.prep.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -112,17 +112,17 @@ jobs:
       - name: Package
         run: |
           chmod +x ballTinyWorld-linux run.sh
-          tar -czf ballTinyWorld-linux.tar.gz ballTinyWorld-linux src/assets/ run.sh
-          ls -la ballTinyWorld-linux.tar.gz
+          tar -czf "ball-tiny-world-v${{ needs.prep.outputs.version }}-linux.tar.gz" \
+            ballTinyWorld-linux src/assets/ run.sh
+          ls -la ball-tiny-world-v*.tar.gz
 
       - uses: actions/upload-artifact@v7
         with:
           name: ballTinyWorld-linux
-          path: ballTinyWorld-linux.tar.gz
+          path: ball-tiny-world-v*-linux.tar.gz
 
   build-macos:
     needs: prep
-    if: always() && (needs.prep.result == 'success' || needs.prep.result == 'skipped')
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
@@ -222,17 +222,17 @@ jobs:
 
       - name: Package
         run: |
-          zip -r ballTinyWorld-macos.zip ballTinyWorld-macos src/assets/ run-macos.sh
-          ls -la ballTinyWorld-macos.zip
+          zip -r "ball-tiny-world-v${{ needs.prep.outputs.version }}-macos.zip" \
+            ballTinyWorld-macos src/assets/ run-macos.sh
+          ls -la ball-tiny-world-v*.zip
 
       - uses: actions/upload-artifact@v7
         with:
           name: ballTinyWorld-macos
-          path: ballTinyWorld-macos.zip
+          path: ball-tiny-world-v*-macos.zip
 
   build-windows:
     needs: prep
-    if: always() && (needs.prep.result == 'success' || needs.prep.result == 'skipped')
     runs-on: windows-latest
     defaults:
       run:
@@ -322,13 +322,14 @@ jobs:
 
       - name: Package
         run: |
-          zip -r ballTinyWorld-windows.zip ballTinyWorld-windows.exe src/assets/
-          ls -la ballTinyWorld-windows.zip
+          zip -r "ball-tiny-world-v${{ needs.prep.outputs.version }}-windows.zip" \
+            ballTinyWorld-windows.exe src/assets/
+          ls -la ball-tiny-world-v*.zip
 
       - uses: actions/upload-artifact@v7
         with:
           name: ballTinyWorld-windows
-          path: ballTinyWorld-windows.zip
+          path: ball-tiny-world-v*-windows.zip
 
   release:
     needs: [prep, build-linux, build-macos, build-windows]
@@ -365,9 +366,9 @@ jobs:
           tag_name: ${{ needs.prep.outputs.tag }}
           name: ${{ needs.prep.outputs.title }}
           files: |
-            ballTinyWorld-linux.tar.gz
-            ballTinyWorld-macos.zip
-            ballTinyWorld-windows.zip
+            ball-tiny-world-v${{ needs.prep.outputs.version }}-linux.tar.gz
+            ball-tiny-world-v${{ needs.prep.outputs.version }}-macos.zip
+            ball-tiny-world-v${{ needs.prep.outputs.version }}-windows.zip
           generate_release_notes: true
 
       - name: Upload to itch.io (Linux)
@@ -377,7 +378,7 @@ jobs:
           CHANNEL: linux
           ITCH_GAME: ball-tiny-world
           ITCH_USER: dryfish09
-          PACKAGE: ballTinyWorld-linux.tar.gz
+          PACKAGE: ball-tiny-world-v${{ needs.prep.outputs.version }}-linux.tar.gz
 
       - name: Upload to itch.io (macOS)
         uses: yeslayla/butler-publish-itchio-action@master
@@ -386,7 +387,7 @@ jobs:
           CHANNEL: macos
           ITCH_GAME: ball-tiny-world
           ITCH_USER: dryfish09
-          PACKAGE: ballTinyWorld-macos.zip
+          PACKAGE: ball-tiny-world-v${{ needs.prep.outputs.version }}-macos.zip
 
       - name: Upload to itch.io (Windows)
         uses: yeslayla/butler-publish-itchio-action@master
@@ -395,4 +396,4 @@ jobs:
           CHANNEL: windows
           ITCH_GAME: ball-tiny-world
           ITCH_USER: dryfish09
-          PACKAGE: ballTinyWorld-windows.zip
+          PACKAGE: ball-tiny-world-v${{ needs.prep.outputs.version }}-windows.zip
