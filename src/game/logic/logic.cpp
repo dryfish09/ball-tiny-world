@@ -114,7 +114,7 @@ void insertLogic() {
             despawnCooldown -= dt;
             drawOpenedChest();
             if (despawnCooldown <= 0) {
-                spawnCooldown = 0;
+                despawnCooldown = 0;
                 // do nothing, skip
             }
             spawnCooldown -= dt;
