@@ -16,6 +16,10 @@ void insertLogic() {
     float runSpeed = 240.5f;
     float dashSpeed = 360.0f;
     bool chestOpened = false;
+    float spawnTimer = 3.0f;
+    float despawnTimer = 5.0f;
+    float despawnCooldown = 0;
+    float spawnCooldown = 0;
     // play background music 
     sound::playBgm();
     while (!WindowShouldClose()) {
@@ -25,10 +29,6 @@ void insertLogic() {
         if(!IsMusicStreamPlaying(sound::bgm)) {
             sound::playBgm();
         }
-        float spawnTimer = 3.0f;
-        float despawnTimer = 5.0f;
-        float despawnCooldown = 0;
-        float spawnCooldown = 0;
         // move ball with arrows and W, A, S, D
         if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
             spawn::ballPos.x += speed * dt;
@@ -65,25 +65,25 @@ void insertLogic() {
             sound::playRunSound();
         }
         // easter egg for who knows some code
-        else if (IsKeyDown(KEY_Y)) {
-            spawn::ballPos.y += dashSpeed * dt;
-        }
-        else if (IsKeyDown(KEY_X)) {
-            spawn::ballPos.x += dashSpeed * dt;
-        }
         else if (IsKeyDown(KEY_X) && IsKeyDown(KEY_LEFT_SHIFT)) {
             spawn::ballPos.x -= dashSpeed * dt;
         }
         else if (IsKeyDown(KEY_Y) && IsKeyDown(KEY_LEFT_SHIFT)) {
             spawn::ballPos.y -= dashSpeed * dt;
         }
-        if (IsKeyPressed(KEY_E) && spawn::ballPos.x <= chestPos.x || IsKeyPressed(KEY_E) && spawn::ballPos.x >= chestPos.x) {
+        else if (IsKeyDown(KEY_Y)) {
+            spawn::ballPos.y += dashSpeed * dt;
+        }
+        else if (IsKeyDown(KEY_X)) {
+            spawn::ballPos.x += dashSpeed * dt;
+        }
+        if (IsKeyPressed(KEY_E) && spawn::ballPos.x == chestPos.x || IsKeyPressed(KEY_E) && spawn::ballPos.x == chestPos.x) {
             chestOpened = true;
             despawnCooldown = despawnTimer;
             spawnCooldown = spawnTimer;
         }
         
-        if (IsKeyPressed(KEY_E) && spawn::ballPos.y <= chestPos.y || IsKeyPressed(KEY_E) && spawn::ballPos.y >= chestPos.y) {
+        if (IsKeyPressed(KEY_E) && spawn::ballPos.y == chestPos.y || IsKeyPressed(KEY_E) && spawn::ballPos.y == chestPos.y) {
             chestOpened = true;
             despawnCooldown = despawnTimer;
             spawnCooldown = spawnTimer;
@@ -116,12 +116,13 @@ void insertLogic() {
         if (chestOpened) {
             despawnCooldown -= dt;
             drawOpenedChest();
-            if (despawnCooldown == 0) {
-                continue;
+            if (despawnCooldown <= 0) {
+                spawnCooldown = 0;
+                // do nothing, skip
             }
             spawnChest();
             spawnCooldown -= dt;
-            if (spawnCooldown == 0) {
+            if (spawnCooldown <= 0) {
                 spawnCooldown = 0;
                 chestOpened = false;
             }
