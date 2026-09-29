@@ -25,10 +25,10 @@ void insertLogic() {
         if(!IsMusicStreamPlaying(sound::bgm)) {
             sound::playBgm();
         }
-        bool shouldSpawn = true;
-        bool shouldDespawn = false;
         float spawnTimer = 3.0f;
         float despawnTimer = 5.0f;
+        float despawnCooldown = 0;
+        float spawnCooldown = 0;
         // move ball with arrows and W, A, S, D
         if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
             spawn::ballPos.x += speed * dt;
@@ -79,10 +79,12 @@ void insertLogic() {
         }
         if (IsKeyPressed(KEY_E) && spawn::ballPos.x <= chestPos.x || IsKeyPressed(KEY_E) && spawn::ballPos.x >= chestPos.x) {
             chestOpened = true;
+            despawnCooldown = despawnTimer;
         }
         
         if (IsKeyPressed(KEY_E) && spawn::ballPos.y <= chestPos.y || IsKeyPressed(KEY_E) && spawn::ballPos.y >= chestPos.y) {
             chestOpened = true;
+            despawnCooldown = despawnTimer;
         }
         // prevent player go out of screen
         if (spawn::ballPos.x - spawn::ballRadius <= 0) {
