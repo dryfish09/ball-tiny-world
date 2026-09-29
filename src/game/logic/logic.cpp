@@ -11,6 +11,8 @@ void insertLogic() {
     spawn::spawnBall();
     spawn::spawnFlower();
     spawnChest();
+    int score = 0;
+    bool scoreAdded = false;
     // speed: 
     float speed = 300.5f;
     float runSpeed = 240.5f;
@@ -115,16 +117,20 @@ void insertLogic() {
                 spawnCooldown = 0;
                 // do nothing, skip
             }
-            spawnChest();
             spawnCooldown -= dt;
-            if (spawnCooldown <= 0) {
+            if (spawnCooldown <= 0 && !scoreAdded) {
                 spawnCooldown = 0;
                 chestOpened = false;
+                score += 2;
+                scoreAdded = true;
+                spawnChest();
             }
         } else {
+            scoreAdded = false;
             drawChest();
         }
         DrawText("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
+        DrawText(TextFormat("Score: %i", score), 20, 50, 20, BLACK);
         EndDrawing();
     }
 }
