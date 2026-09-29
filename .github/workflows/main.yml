@@ -5,7 +5,7 @@ on:
     branches: 'main'
     paths-ignore:
       - '**.md'
-      - '**/**md'
+      - '**/**.md'
       - 'LICENSE'
       - '.**'
   pull_request:
