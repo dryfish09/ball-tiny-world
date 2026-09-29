@@ -12,7 +12,6 @@ void insertLogic() {
     spawn::spawnFlower();
     spawnChest();
     // speed: 
-    float dt = GetFrameTime();
     float speed = 300.5f;
     float runSpeed = 240.5f;
     float dashSpeed = 360.0f;
@@ -20,6 +19,7 @@ void insertLogic() {
     // play background music 
     sound::playBgm();
     while (!WindowShouldClose()) {
+        float dt = GetFrameTime();
         UpdateMusicStream(sound::bgm);
         // check is bgm are playing and replay it
         if(!IsMusicStreamPlaying(sound::bgm)) {
