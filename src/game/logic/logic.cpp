@@ -80,11 +80,13 @@ void insertLogic() {
         if (IsKeyPressed(KEY_E) && spawn::ballPos.x <= chestPos.x || IsKeyPressed(KEY_E) && spawn::ballPos.x >= chestPos.x) {
             chestOpened = true;
             despawnCooldown = despawnTimer;
+            spawnCoodown = spawnTimer;
         }
         
         if (IsKeyPressed(KEY_E) && spawn::ballPos.y <= chestPos.y || IsKeyPressed(KEY_E) && spawn::ballPos.y >= chestPos.y) {
             chestOpened = true;
             despawnCooldown = despawnTimer;
+            spawnCooldown = spawnTimer;
         }
         // prevent player go out of screen
         if (spawn::ballPos.x - spawn::ballRadius <= 0) {
@@ -112,9 +114,17 @@ void insertLogic() {
         DrawTextureV(texture::flowerTexture, spawn::flowerPos5, WHITE);
         DrawTextureV(texture::flowerTexture, spawn::flowerPos6, WHITE);
         if (chestOpened) {
+            despawnCooldown -= dt;
             drawOpenedChest();
+            if (despawnCooldown == 0) {
+                continue;
+            }
             spawnChest();
-            chestOpened = false;
+            spawnCooldown -= dt;
+            if (spawnCooldown == 0) {
+                spawnCooldown = 0;
+                chestOpened = false;
+            }
             continue;
         } else {
             drawChest();
