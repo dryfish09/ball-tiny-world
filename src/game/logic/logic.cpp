@@ -26,8 +26,25 @@ void insertLogic() {
         float dt = GetFrameTime();
         UpdateMusicStream(sound::bgm);
         // check is bgm are playing and replay it
-        if(!IsMusicStreamPlaying(sound::bgm)) {
+        if (!IsMusicStreamPlaying(sound::bgm)) {
             sound::playBgm();
+        }
+        // player will move slower when player hold to move
+        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
+            spawn::ballPos.x += runSpeed * dt;
+            sound::playRunSound();
+        }
+        else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) {
+            spawn::ballPos.x -= runSpeed * dt;
+            sound::playRunSound();
+        }
+        else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) {
+            spawn::ballPos.y += runSpeed * dt;
+            sound::playRunSound();
+        }
+        else if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) {
+            spawn::ballPos.y -= runSpeed * dt;
+            sound::playRunSound();
         }
         // move ball with arrows and W, A, S, D
         if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
@@ -47,23 +64,7 @@ void insertLogic() {
             spawn::ballPos.y -= speed * dt;
             sound::playFootstepSound();
         }
-        // player will move slower when player hold to move
-        else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
-            spawn::ballPos.x += runSpeed * dt;
-            sound::playRunSound();
-        }
-        else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) {
-            spawn::ballPos.x -= runSpeed * dt;
-            sound::playRunSound();
-        }
-        else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) {
-            spawn::ballPos.y += runSpeed * dt;
-            sound::playRunSound();
-        }
-        else if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) {
-            spawn::ballPos.y -= runSpeed * dt;
-            sound::playRunSound();
-        }
+        
         // easter egg for who knows some code
         else if (IsKeyDown(KEY_X) && IsKeyDown(KEY_LEFT_SHIFT)) {
             spawn::ballPos.x -= dashSpeed * dt;
@@ -77,13 +78,7 @@ void insertLogic() {
         else if (IsKeyDown(KEY_X)) {
             spawn::ballPos.x += dashSpeed * dt;
         }
-        if (IsKeyPressed(KEY_E) && spawn::ballPos.x == chestPos.x || IsKeyPressed(KEY_E) && spawn::ballPos.x == chestPos.x) {
-            chestOpened = true;
-            despawnCooldown = despawnTimer;
-            spawnCooldown = spawnTimer;
-        }
-        
-        if (IsKeyPressed(KEY_E) && spawn::ballPos.y == chestPos.y || IsKeyPressed(KEY_E) && spawn::ballPos.y == chestPos.y) {
+        if (IsKeyPressed(KEY_E) && (spawn::ballPos.x - chestPos.x) * (spawn::ballPos.x - chestPos.x) + (spawn::ballPos.y - chestPos.y) * (spawn::ballPos.y - chestPos.y) < 2500) {
             chestOpened = true;
             despawnCooldown = despawnTimer;
             spawnCooldown = spawnTimer;
@@ -126,10 +121,8 @@ void insertLogic() {
                 spawnCooldown = 0;
                 chestOpened = false;
             }
-            continue;
         } else {
             drawChest();
-            continue;
         }
         DrawText("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
         EndDrawing();
