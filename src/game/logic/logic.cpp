@@ -79,16 +79,20 @@ void insertLogic() {
             spawn::ballPos.x += dashSpeed * dt;
         }
         // player pos must = chest pos to open, because player doesn't have hands :)
-        if (IsKeyPressed(KEY_E) && spawn::ballPos.x == chestPos.x) {
-            chestOpened = true;
-            despawnCooldown = despawnTimer;
-            spawnCooldown = spawnTimer;
+        if (IsKeyPressed(KEY_E)) {
+            if (spawn::ballPos.x == chestPos.x + spawn::ballPos || spawn::ballPos.x == chestPos.x - spawn::ballPos.x) {
+                chestOpened = true;
+                despawnCooldown = despawnTimer;
+                spawnCooldown = spawnTimer;
+            }
         }
         
-        if (IsKeyPressed(KEY_E) && spawn::ballPos.y == chestPos.y) {
-            chestOpened = true;
-            despawnCooldown = despawnTimer;
-            spawnCooldown = spawnTimer;
+        if (IsKeyPressed(KEY_E)) {
+            if (spawn::ballPos.y == chestPos.y + spawn::ballPos || spawn::ballPos.y == chestPos.y - spawn::ballPos.y) {
+                chestOpened = true;
+                despawnCooldown = despawnTimer;
+                spawnCooldown = spawnTimer;
+            }
         }
         // prevent player go out of screen
         if (spawn::ballPos.x - spawn::ballRadius <= 0) {
