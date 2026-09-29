@@ -26,11 +26,11 @@ void insertLogic() {
         float dt = GetFrameTime();
         UpdateMusicStream(sound::bgm);
         // check is bgm are playing and replay it
-        if(!IsMusicStreamPlaying(sound::bgm)) {
+        if (!IsMusicStreamPlaying(sound::bgm)) {
             sound::playBgm();
         }
         // player will move slower when player hold to move
-        else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
+        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
             spawn::ballPos.x += runSpeed * dt;
             sound::playRunSound();
         }
