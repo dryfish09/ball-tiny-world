@@ -84,7 +84,7 @@ jobs:
     # raylib version or build options change.
     - name: Cache FetchContent deps
       if: matrix.language == 'c-cpp'
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: build/_deps
         key: fetchcontent-${{ runner.os }}-${{ hashFiles('CMakeLists.txt', '**/CMakeLists.txt') }}
@@ -97,6 +97,13 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
+        config: |
+          paths-ignore:
+            - 'build/**'
+            - '**/_deps/**'
+            - '**/external/**'
+            - '**/third_party/**'
+            - '**/vendor/**'
         # If you wish to specify custom queries, you can do so here or in a config file.
         # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
