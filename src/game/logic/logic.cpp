@@ -19,8 +19,6 @@ void insertLogic() {
     float dashSpeed = 360.0f;
     bool chestOpened = false;
     float spawnTimer = 3.0f;
-    float despawnTimer = 5.0f;
-    float despawnCooldown = 0;
     float spawnCooldown = 0;
     // play background music 
     sound::playBgm();
@@ -82,7 +80,6 @@ void insertLogic() {
         }
         if (IsKeyPressed(KEY_E) && (spawn::ballPos.x - chestPos.x) * (spawn::ballPos.x - chestPos.x) + (spawn::ballPos.y - chestPos.y) * (spawn::ballPos.y - chestPos.y) < 2500) {
             chestOpened = true;
-            despawnCooldown = despawnTimer;
             spawnCooldown = spawnTimer;
         }
         // prevent player go out of screen
@@ -111,12 +108,7 @@ void insertLogic() {
         DrawTextureV(texture::flowerTexture, spawn::flowerPos5, WHITE);
         DrawTextureV(texture::flowerTexture, spawn::flowerPos6, WHITE);
         if (chestOpened) {
-            despawnCooldown -= dt;
             drawOpenedChest();
-            if (despawnCooldown <= 0) {
-                despawnCooldown = 0;
-                // do nothing, skip
-            }
             spawnCooldown -= dt;
             if (spawnCooldown <= 0 && !scoreAdded) {
                 spawnCooldown = 0;
