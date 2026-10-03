@@ -96,38 +96,42 @@ void insertLogic() {
         if (spawn::ballPos.y + spawn::ballRadius >= windowY) {
             spawn::ballPos.y = windowY - spawn::ballRadius;
         }
-        BeginDrawing();
-        ClearBackground(GREEN);
-        // draw background
-        texture::drawBackground(texture::bg);
-        // draw some circle
-        DrawTextureV(texture::ball, spawn::ballPos, WHITE);
-        DrawTextureV(texture::flowerTexture, spawn::flowerPos, WHITE);
-        DrawTextureV(texture::flowerTexture, spawn::flowerPos2, WHITE);
-        DrawTextureV(texture::flowerTexture, spawn::flowerPos3, WHITE);
-        DrawTextureV(texture::flowerTexture, spawn::flowerPos4, WHITE);
-        DrawTextureV(texture::flowerTexture, spawn::flowerPos5, WHITE);
-        DrawTextureV(texture::flowerTexture, spawn::flowerPos6, WHITE);
-        if (chestOpened) {
-            trapped = GetRandomValue(0, 1);
-            drawOpenedChest();
-            spawnCooldown -= dt;
-            if (spawnCooldown <= 0 && !scoreAdded && trapped == 0) {
-                spawnCooldown = 0;
-                chestOpened = false;
-                score += 2;
-                scoreAdded = true;
-                spawnChest();
-            }
-            if (trapped == 1) {
-                score -= score;
-            }
-        } else {
-            scoreAdded = false;
-            drawChest();
-        }
-        DrawText("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
-        DrawText(TextFormat("Score: %i", score), 20, 50, 20, BLACK);
-        EndDrawing();
+        draw();
     }
+}
+void draw() {
+    BeginDrawing();
+    ClearBackground(GREEN);
+    // draw background
+    texture::drawBackground(texture::bg);
+    // draw some circle
+    DrawTextureV(texture::ball, spawn::ballPos, WHITE);
+    DrawTextureV(texture::flowerTexture, spawn::flowerPos, WHITE);
+    DrawTextureV(texture::flowerTexture, spawn::flowerPos2, WHITE);
+    DrawTextureV(texture::flowerTexture, spawn::flowerPos3, WHITE);
+    DrawTextureV(texture::flowerTexture, spawn::flowerPos4, WHITE);
+    DrawTextureV(texture::flowerTexture, spawn::flowerPos5, WHITE);
+    DrawTextureV(texture::flowerTexture, spawn::flowerPos6, WHITE);
+    if (chestOpened) {
+        trapped = GetRandomValue(0, 1);
+        drawOpenedChest();
+        spawnCooldown -= dt;
+        if (spawnCooldown <= 0 && !scoreAdded && trapped == 0) {
+            spawnCooldown = 0;
+            chestOpened = false;
+            score += 2;
+            scoreAdded = true;
+            spawnChest();
+            
+        }
+        if (trapped == 1) {
+            score -= score;
+        }
+    } else {
+        scoreAdded = false;
+        drawChest();
+    }
+    DrawText("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
+    DrawText(TextFormat("Score: %i", score), 20, 50, 20, BLACK);
+    EndDrawing();
 }
