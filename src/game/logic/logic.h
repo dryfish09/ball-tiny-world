@@ -6,3 +6,4 @@ extern float speed;
 extern float spawnTimer;
 extern float spawnCooldown;
 void insertLogic();
+void draw();
