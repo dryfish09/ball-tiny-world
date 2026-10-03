@@ -3,6 +3,6 @@ extern float dashSpeed;
 extern float runSpeed;
 extern bool chestOpened;
 extern float speed;
-extern spawnTimer;
-extern spawnCooldown;
+extern float spawnTimer;
+extern float spawnCooldown;
 void insertLogic();
