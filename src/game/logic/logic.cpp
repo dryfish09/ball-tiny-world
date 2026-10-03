@@ -8,6 +8,7 @@
 #include "game/spawn/chest/chest.h"
 #include "logic.h"
 void insertLogic() {
+    int trapped = GetRandomValue(0, 1);
     spawn::spawnBall();
     spawn::spawnFlower();
     spawnChest();
@@ -108,14 +109,18 @@ void insertLogic() {
         DrawTextureV(texture::flowerTexture, spawn::flowerPos5, WHITE);
         DrawTextureV(texture::flowerTexture, spawn::flowerPos6, WHITE);
         if (chestOpened) {
+            trapped = GetRandomValue(0, 1);
             drawOpenedChest();
             spawnCooldown -= dt;
-            if (spawnCooldown <= 0 && !scoreAdded) {
+            if (spawnCooldown <= 0 && !scoreAdded && trapped == 0) {
                 spawnCooldown = 0;
                 chestOpened = false;
                 score += 2;
                 scoreAdded = true;
                 spawnChest();
+            }
+            if (trapped == 1) {
+                score -= score;
             }
         } else {
             scoreAdded = false;
