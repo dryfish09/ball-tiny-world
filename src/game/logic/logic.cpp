@@ -8,6 +8,7 @@
 #include "game/spawn/chest/chest.h"
 #include "logic.h"
 // global stuff
+float dt;
 int trapped = GetRandomValue(0, 1);
 int score = 0;
 bool scoreAdded = false;
@@ -25,7 +26,7 @@ void insertLogic() {
     // play background music 
     sound::playBgm();
     while (!WindowShouldClose()) {
-        float dt = GetFrameTime();
+        dt = GetFrameTime();
         UpdateMusicStream(sound::bgm);
         // check is bgm are playing and replay it
         if (!IsMusicStreamPlaying(sound::bgm)) {
