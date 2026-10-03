@@ -7,20 +7,21 @@
 #include "game/spawn/player/ball_spawner.h"
 #include "game/spawn/chest/chest.h"
 #include "logic.h"
+// global stuff
+int trapped = GetRandomValue(0, 1);
+int score = 0;
+bool scoreAdded = false;
+bool chestOpened = false;
+float spawnTimer = 3.0f;
+float spawnCooldown = 0;
 void insertLogic() {
-    int trapped = GetRandomValue(0, 1);
     spawn::spawnBall();
     spawn::spawnFlower();
     spawnChest();
-    int score = 0;
-    bool scoreAdded = false;
     // speed: 
     float speed = 300.5f;
     float runSpeed = 240.5f;
     float dashSpeed = 360.0f;
-    bool chestOpened = false;
-    float spawnTimer = 3.0f;
-    float spawnCooldown = 0;
     // play background music 
     sound::playBgm();
     while (!WindowShouldClose()) {
