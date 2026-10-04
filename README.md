@@ -25,9 +25,14 @@ MacOS also requires you need to give it **run permission**.
 ```bash
 bash ./run-macos.sh
 ```
+### Windows:
+just unzip, double click into `.exe` file. And if anti virus blocks it, you know...
 
 ## How to play:
-Use arrow keys or WASD keys on your keyboard to move, you can't move out of screen
+Use arrow keys or WASD keys on your keyboard to move, you can't move out of screen, open chest, get scores.
+
+While opening the chest, you can be trapped, your score will be zero, haha.
+
 
 > [!NOTE]
 > Because I just learning raylib now, so code maybe is not best practise, too simple,... So if you like this game, pls help me improve it by open an issue!!!
