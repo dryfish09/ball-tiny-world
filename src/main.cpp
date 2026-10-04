@@ -8,7 +8,9 @@ int main() {
     init();
     // set target fps
     SetTargetFPS(60);
+    // call logic
     insertLogic();
+    // unload and close devicee lik3bsound,windows,etc.
     unloadAndClose();
     return 0;
 }
