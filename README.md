@@ -2,6 +2,7 @@
 
 [![Build and Release](https://github.com/dryfish09/ballGame2d/actions/workflows/main.yml/badge.svg)](https://github.com/dryfish09/ballGame2d/actions/workflows/main.yml)
 ![GitHub last commit](https://img.shields.io/github/last-commit/dryfish09/ballGame2d)
+![Downloads](https://img.shields.io/github/downloads/dryfish09/ball-tiny-world/total)
 
 
 ## What's it:
