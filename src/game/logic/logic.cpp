@@ -15,6 +15,7 @@ bool scoreAdded = false;
 bool chestOpened = false;
 float spawnTimer = 3.0f;
 float spawnCooldown = 0;
+int highScore = 0;
 void insertLogic() {
     spawn::spawnBall();
     spawn::spawnFlower();
@@ -124,7 +125,9 @@ void draw() {
             score += 2;
             scoreAdded = true;
             spawnChest();
-            
+        }
+        if (highScore >= score) {
+            highScore = score;
         }
         if (trapped == 1) {
             score -= score / 2;
@@ -135,5 +138,6 @@ void draw() {
     }
     DrawText("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
     DrawText(TextFormat("Score: %i", score), 20, 50, 20, BLACK);
+    DrawText(TextFormat("High score: %i", highScore), 20, 80, 20, BLACK);
     EndDrawing();
 }
