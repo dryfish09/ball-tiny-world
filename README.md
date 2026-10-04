@@ -9,6 +9,8 @@
 This is my first game, written in C++ with Raylib.
 
 You're Ball, a small yellow ball, it lives in a tiny green world that has 6 flowers.
+> [!NOTE]
+> This game only uploaded,developed in/on this repository or [itch.io](https://dryfish09.itch.io/ball-tiny-world).  .  Other source is unofficial,fork,or minor,Downloading from unofficial sources puts you at risk for security, personal safety, and property! 
 ## How to run app on Linux or MacOS
 ### Linux:
 Linux requires you need to give it a **run permission**. 
