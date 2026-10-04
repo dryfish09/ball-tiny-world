@@ -127,7 +127,7 @@ void draw() {
             
         }
         if (trapped == 1) {
-            score -= score;
+            score -= score / 2;
         }
     } else {
         scoreAdded = false;
