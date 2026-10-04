@@ -31,7 +31,7 @@ just unzip, double click into `.exe` file. And if anti virus blocks it, you know
 ## How to play:
 Use arrow keys or WASD keys on your keyboard to move, you can't move out of screen, open chest, get scores.
 
-While opening the chest, you can be trapped, your score will be zero, haha.
+While opening the chest, you can be trapped, you'll lost half of score, haha.
 
 
 > [!NOTE]
