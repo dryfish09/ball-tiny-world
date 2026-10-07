@@ -6,7 +6,7 @@
 
 int main() {
     init();
-    // set target fpss
+    // set target fpd
     SetTargetFPS(60);
     // call logic
     insertLogic();
