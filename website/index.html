@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ball's 2D World · official</title>
+  <meta name="description" content="Ball's 2D World – a tiny yellow ball in a tiny green world. Free C++/Raylib game. Download for Linux, macOS, Windows.">
+  <meta name="theme-color" content="#1a3d2e">
+  <link rel="canonical" href="https://dryfish09.github.io/ball-tiny-world/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ball's 2D World">
+  <meta property="og:title" content="Ball's 2D World">
+  <meta property="og:description" content="Tiny yellow ball. Tiny green world. Open chests, collect scores, don't get trapped!">
+  <meta property="og:url" content="https://dryfish09.github.io/ball-tiny-world/">
+  <meta property="og:image" content="https://raw.githubusercontent.com/dryfish09/ball-tiny-world/main/preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ball's 2D World">
+  <meta name="twitter:description" content="Tiny yellow ball. Tiny green world. Free C++/Raylib game.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/dryfish09/ball-tiny-world/main/preview.png">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🟡</text></svg>">
+
+  <!-- Font pixel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      /* Pixel palette */
+      --grass-dark: #1a3d2e;
+      --grass: #2d5a3f;
+      --grass-light: #3e7351;
+      --sky: #7ec8e3;
+      --gold: #ffd93d;
+      --gold-shadow: #b88a00;
+      --cream: #fff8e7;
+      --wood: #8b5a2b;
+      --chest-brown: #6b3f1d;
+      --leaf: #6bbf59;
+      --danger: #e85d3c;
+    }
+
+    body {
+      /* Nền cỏ pixel: gradient + pattern grid mờ */
+      background-color: var(--grass-dark);
+      background-image:
+        /* Lớp scanline pixel */
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px),
+        /* Lớp cỏ sáng dần từ trên xuống */
+        linear-gradient(180deg, #2d5a3f 0%, #1a3d2e 100%);
+      font-family: 'VT323', 'Courier New', monospace;
+      font-size: 18px;
+      color: var(--cream);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.5rem;
+      image-rendering: pixelated;
+    }
+
+    .game-card {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(26, 61, 46, 0.92);
+      /* Border pixel: dashed 4px thay vì mượt */
+      border: 4px dashed var(--gold);
+      border-radius: 12px;
+      padding: 2.5rem 2.8rem;
+      /* Shadow pixel offset cứng, không blur */
+      box-shadow:
+        8px 8px 0 rgba(0, 0, 0, 0.5),
+        inset 0 0 0 2px rgba(255, 217, 61, 0.15);
+    }
+
+    /* ===== HEADER ===== */
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-bottom: 1.8rem;
+      flex-wrap: wrap;
+    }
+
+    .ball-icon {
+      font-size: 3.5rem;
+      line-height: 1;
+      /* Animation nhún nhẹ kiểu game */
+      animation: bob 1.2s steps(2, end) infinite;
+      filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.5));
+    }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .logo-text h1 {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 2.2rem;
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: 1px;
+      color: var(--gold);
+      /* Outline pixel: 4 shadow offset không blur */
+      text-shadow:
+        3px 3px 0 var(--gold-shadow),
+        3px 0 0 var(--gold-shadow),
+        0 3px 0 var(--gold-shadow);
+      /* Bỏ gradient mờ */
+      -webkit-text-fill-color: var(--gold);
+    }
+
+    .logo-text .sub {
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      color: var(--leaf);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 8px;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+    }
+
+    /* ===== BADGES ===== */
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .badge {
+      background: var(--grass);
+      border-radius: 6px;
+      padding: 0.4rem 1rem;
+      font-family: 'VT323', monospace;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--cream);
+      border: 2px solid var(--grass-light);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.1s steps(2, end);
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .badge i { color: var(--gold); }
+
+    .badge:hover {
+      border-color: var(--gold);
+      background: var(--grass-light);
+      color: #fff;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    /* ===== BUTTONS ===== */
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      border: 3px solid #0d1f17;
+      padding: 0.85rem 1.8rem;
+      border-radius: 8px;
+      font-family: 'Press Start 2P', monospace;
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      cursor: pointer;
+      transition: transform 0.05s steps(2, end), box-shadow 0.05s steps(2, end);
+      text-decoration: none;
+      background: var(--grass-light);
+      color: var(--cream);
+      /* Shadow pixel cứng */
+      box-shadow: 5px 5px 0 #0d1f17;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: #3a2a00;
+      border: 3px solid #3a2a00;
+      box-shadow: 5px 5px 0 var(--gold-shadow);
+      text-shadow: none;
+    }
+
+    .btn-primary i { color: #3a2a00; }
+
+    .btn-primary:hover {
+      background: #ffe066;
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 var(--gold-shadow);
+    }
+
+    .btn-secondary:hover {
+      background: #4d8a63;
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 #0d1f17;
+    }
+
+    /* Nhấn xuống: dồn shadow vào */
+    .btn:active {
+      transform: translate(5px, 5px);
+      box-shadow: 0 0 0 #0d1f17;
+    }
+
+    .btn-primary:active {
+      box-shadow: 0 0 0 var(--gold-shadow);
+    }
+
+    .btn:focus-visible,
+    .badge:focus-visible,
+    a:focus-visible,
+    code:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    /* ===== SECTION TITLES ===== */
+    .section-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin: 2rem 0 1rem;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      border-bottom: 3px dashed var(--grass-light);
+      padding-bottom: 0.6rem;
+      text-shadow: 2px 2px 0 var(--gold-shadow);
+    }
+
+    .section-title i { color: var(--leaf); }
+
+    /* ===== FEATURE LIST ===== */
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-list li {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      background: rgba(45, 90, 63, 0.6);
+      padding: 0.9rem 1.2rem;
+      border-radius: 6px;
+      border-left: 5px solid var(--gold);
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.35);
+    }
+
+    .feature-list i {
+      color: var(--gold);
+      font-size: 1.2rem;
+      min-width: 1.4rem;
+      margin-top: 0.25rem;
+    }
+
+    .feature-list strong {
+      color: var(--gold);
+      font-family: 'VT323', monospace;
+      font-size: 1.1em;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===== PLATFORM ROWS ===== */
+    .platform-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(13, 31, 23, 0.7);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1rem;
+      border: 2px solid var(--grass-light);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .platform-row > i {
+      font-size: 1.8rem;
+      width: 2.2rem;
+      color: var(--gold);
+      text-align: center;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .platform-row .p-text {
+      flex: 1;
+      font-size: 1.05rem;
+    }
+
+    .platform-row .p-text strong {
+      font-size: 1.15rem;
+      color: var(--gold);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+    }
+
+    .cmd-hint {
+      background: #000;
+      border-radius: 4px;
+      padding: 0.4rem 0.9rem;
+      font-family: 'VT323', 'Courier New', monospace;
+      font-size: 1rem;
+      color: var(--leaf);
+      margin-top: 0.4rem;
+      border-left: 4px solid var(--gold);
+      word-break: break-word;
+      display: inline-block;
+      box-shadow: inset 0 0 0 1px #1a3d2e;
+    }
+
+    /* ===== ROADMAP ===== */
+    .roadmap-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin: 1.8rem 0 1rem;
+      padding: 1.2rem 0 0;
+      border-top: 3px dashed var(--grass-light);
+    }
+
+    .roadmap-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1.05rem;
+      color: var(--cream);
+      background: rgba(13, 31, 23, 0.5);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      border-left: 4px solid var(--grass-light);
+    }
+
+    .roadmap-list li i {
+      width: 1.4rem;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .roadmap-list li i.fa-check-circle { color: var(--leaf); }
+    .roadmap-list li i.fa-clock { color: var(--gold); }
+    .roadmap-list li i.fa-circle-xmark { color: #8a8a8a; }
+
+    /* ===== WARNING ===== */
+    .warning-note {
+      background: rgba(139, 90, 43, 0.35);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      font-size: 0.95rem;
+      color: var(--cream);
+      border-left: 6px solid var(--danger);
+      border-top: 2px solid var(--chest-brown);
+      border-right: 2px solid var(--chest-brown);
+      border-bottom: 2px solid var(--chest-brown);
+      margin: 1.5rem 0 0;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .warning-note i {
+      font-size: 1.5rem;
+      color: var(--gold);
+      flex-shrink: 0;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .warning-note strong {
+      color: var(--gold);
+    }
+
+    /* ===== API STATUS ===== */
+    .api-status {
+      font-size: 0.95rem;
+      color: var(--leaf);
+      margin-top: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .api-status i { color: var(--gold); }
+    .api-status.is-hidden { display: none; }
+    .api-status.is-error { color: var(--danger); }
+    .api-status.is-error i { color: var(--danger); }
+
+    /* ===== REPO STATS ===== */
+    .repo-stats {
+      display: none;
+      flex-wrap: wrap;
+      gap: 0.8rem 1.8rem;
+      background: rgba(13, 31, 23, 0.7);
+      border-radius: 8px;
+      padding: 0.9rem 1.5rem;
+      margin: 1.5rem 0 0.5rem;
+      border: 2px solid var(--grass-light);
+      font-size: 1rem;
+      align-items: center;
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .repo-stats.is-visible { display: flex; }
+
+    .repo-stats span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .repo-stats i { color: var(--gold); }
+
+    /* ===== FOOTER ===== */
+    .credit-footer {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      color: var(--leaf);
+      font-size: 1rem;
+      text-align: center;
+      border-top: 3px dashed var(--grass-light);
+      padding-top: 1.5rem;
+    }
+
+    .credit-footer a {
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 2px dotted var(--gold);
+    }
+
+    .credit-footer a:hover { color: #ffe066; }
+
+    .footer-note {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--leaf);
+      text-align: center;
+      width: 100%;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 700px) {
+      .game-card { padding: 1.8rem 1.5rem; }
+      .logo-text h1 { font-size: 1.5rem; }
+      .ball-icon { font-size: 2.8rem; }
+      .btn { padding: 0.75rem 1.3rem; font-size: 0.75rem; }
+      .platform-row { flex-wrap: wrap; padding: 1rem; }
+      .platform-row > i { font-size: 1.5rem; width: 1.8rem; }
+      .section-title { font-size: 0.9rem; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 0.8rem; font-size: 16px; }
+      .game-card { padding: 1.2rem; border-width: 3px; }
+      .logo-section { gap: 0.6rem; }
+      .logo-text h1 { font-size: 1.15rem; }
+      .logo-text .sub { font-size: 0.85rem; letter-spacing: 2px; }
+      .badge { font-size: 0.85rem; padding: 0.3rem 0.7rem; }
+      .feature-list li { padding: 0.7rem 0.9rem; font-size: 0.95rem; }
+      .warning-note { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .ball-icon { animation: none; }
+      .fa-spin { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-card">
+    <div class="logo-section">
+      <div class="ball-icon" aria-hidden="true">🟡</div>
+      <div class="logo-text">
+        <h1>Ball's 2D World</h1>
+        <div class="sub">tiny yellow ball in a tiny green world</div>
+      </div>
+    </div>
+
+    <div class="badge-row" id="badgeRow">
+      <span class="badge"><i class="fas fa-balance-scale" aria-hidden="true"></i> GPL-3.0</span>
+      <span class="badge"><i class="fas fa-code" aria-hidden="true"></i> C++ / Raylib</span>
+      <span class="badge" id="starsBadge"><i class="fas fa-star" aria-hidden="true"></i> <span id="starCount">2</span> stars</span>
+      <span class="badge" id="versionBadge"><i class="fas fa-tag" aria-hidden="true"></i> <span id="versionText">v1.4.0</span></span>
+      <span class="badge" id="releasesBadge"><i class="fas fa-gamepad" aria-hidden="true"></i> <span id="releasesText">0</span> releases</span>
+      <span class="badge"><i class="fas fa-code-branch" aria-hidden="true"></i> <span id="commitSha">—</span></span>
+    </div>
+
+    <div class="cta-row">
+      <a href="https://github.com/dryfish09/ball-tiny-world/releases" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+        <i class="fas fa-download" aria-hidden="true"></i> DOWNLOAD
+      </a>
+      <a href="https://github.com/dryfish09/ball-tiny-world" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+        <i class="fab fa-github" aria-hidden="true"></i> GITHUB
+      </a>
+      <a href="https://dryfish09.itch.io/ball-tiny-world" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+        <i class="fab fa-itch-io" aria-hidden="true"></i> ITCH.IO
+      </a>
+    </div>
+
+    <div class="api-status" id="apiStatus" role="status" aria-live="polite">
+      <i class="fas fa-sync-alt fa-spin" aria-hidden="true"></i> Loading live stats from GitHub API...
+    </div>
+
+    <div class="repo-stats" id="repoStats">
+      <span><i class="fas fa-code-branch" aria-hidden="true"></i> <span id="statBranch">main</span></span>
+      <span><i class="fas fa-eye" aria-hidden="true"></i> <span id="statWatchers">0</span> watchers</span>
+      <span><i class="fas fa-code-fork" aria-hidden="true"></i> <span id="statForks">0</span> forks</span>
+      <span><i class="fas fa-circle-exclamation" aria-hidden="true"></i> <span id="statIssues">0</span> open issues</span>
+      <span><i class="fas fa-history" aria-hidden="true"></i> updated <span id="statUpdated">—</span></span>
+    </div>
+
+    <h2 class="section-title">
+      <i class="fas fa-circle-info" aria-hidden="true"></i> WHAT'S INSIDE?
+    </h2>
+    <ul class="feature-list">
+      <li>
+        <i class="fas fa-seedling" aria-hidden="true"></i>
+        <span><strong>You're Ball</strong> – a small yellow ball living in a tiny green world with 6 flowers. Move with arrows or WASD, open chests, collect scores. But beware: chests can trap you and take half your score! 😱</span>
+      </li>
+      <li>
+        <i class="fas fa-cube" aria-hidden="true"></i>
+        <span><strong>First Raylib project</strong> – simple, chaotic, and built with love. C++ / CMake / Raylib. Graphics, sounds and textures from free assets on itch.io.</span>
+      </li>
+      <li>
+        <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+        <span><strong>Unofficial sources warning</strong> – only download from this repo or itch.io. Other sources are unofficial forks/minor. Stay safe!</span>
+      </li>
+    </ul>
+
+    <h2 class="section-title">
+      <i class="fas fa-terminal" aria-hidden="true"></i> HOW TO RUN
+    </h2>
+
+    <div class="platform-row">
+      <i class="fab fa-linux" aria-hidden="true"></i>
+      <div class="p-text">
+        <strong>LINUX</strong> – .tar.gz<br>
+        <code class="cmd-hint">bash ./run.sh</code>
+      </div>
+    </div>
+
+    <div class="platform-row">
+      <i class="fab fa-apple" aria-hidden="true"></i>
+      <div class="p-text">
+        <strong>MACOS</strong> – .zip<br>
+        <code class="cmd-hint">bash ./run-macos.sh</code>
+      </div>
+    </div>
+
+    <div class="platform-row">
+      <i class="fab fa-windows" aria-hidden="true"></i>
+      <div class="p-text">
+        <strong>WINDOWS</strong> – .exe<br>
+        <span style="font-size:0.95rem; color:#b8d4c2;">double-click to run. Unsigned build – SmartScreen may warn.</span>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-top:2.2rem;">
+      <i class="fas fa-list-check" aria-hidden="true"></i> ROADMAP
+    </h2>
+    <ul class="roadmap-list">
+      <li><i class="fas fa-check-circle" aria-hidden="true"></i> basic game</li>
+      <li><i class="fas fa-check-circle" aria-hidden="true"></i> sounds</li>
+      <li><i class="fas fa-check-circle" aria-hidden="true"></i> more sounds</li>
+      <li><i class="fas fa-check-circle" aria-hidden="true"></i> textures</li>
+      <li><i class="fas fa-check-circle" aria-hidden="true"></i> more textures</li>
+      <li><i class="fas fa-clock" aria-hidden="true"></i> modding api</li>
+      <li><i class="fas fa-circle-xmark" aria-hidden="true"></i> fps under 10 (canceled)</li>
+      <li><i class="fas fa-circle-xmark" aria-hidden="true"></i> delete repo (canceled)</li>
+    </ul>
+
+    <div class="warning-note" role="note">
+      <i class="fas fa-shield-halved" aria-hidden="true"></i>
+      <span><strong>OFFICIAL NOTICE:</strong> This game is only uploaded and developed on the <a href="https://github.com/dryfish09/ball-tiny-world" target="_blank" rel="noopener noreferrer" style="color:#ffd93d;">GitHub repository</a> and <a href="https://dryfish09.itch.io/ball-tiny-world" target="_blank" rel="noopener noreferrer" style="color:#ffd93d;">itch.io page</a>. Other sources are unofficial. Downloading from unofficial sources puts you at risk.</span>
+    </div>
+
+    <footer class="credit-footer">
+      <div>
+        <i class="fas fa-fish" aria-hidden="true"></i> Made with 🐟 by <a href="https://github.com/dryfish09" target="_blank" rel="noopener noreferrer">dryfish09</a> – thanks to RayLib and all asset authors
+      </div>
+      <div>
+        <i class="fas fa-heart" style="color:#e85d3c;" aria-hidden="true"></i> <a href="https://www.raylib.com/" target="_blank" rel="noopener noreferrer">RayLib</a> – <a href="https://itch.io/" target="_blank" rel="noopener noreferrer">itch.io assets</a>
+      </div>
+      <div>
+        <i class="fas fa-code-branch" aria-hidden="true"></i> dryfish09/ball-tiny-world – GPL-3.0
+      </div>
+    </footer>
+  </div>
+
+  <footer class="footer-note">
+    official landing page – data from GitHub API – game content belongs to dryfish09
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const repo = 'dryfish09/ball-tiny-world';
+      const CACHE_KEY = 'ballworld_gh_stats_v1';
+      const CACHE_TTL = 10 * 60 * 1000;
+
+      const apiStatus = document.getElementById('apiStatus');
+      const repoStats = document.getElementById('repoStats');
+
+      const setText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = String(text);
+      };
+
+      const formatRelativeDate = (dateStr) => {
+        const updated = new Date(dateStr);
+        if (Number.isNaN(updated.getTime())) return '—';
+        const diffDays = Math.floor((Date.now() - updated) / 86400000);
+        if (diffDays === 0) return 'today';
+        if (diffDays === 1) return 'yesterday';
+        if (diffDays < 30) return `${diffDays} days ago`;
+        return updated.toLocaleDateString();
+      };
+
+      const headers = {
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      };
+
+      function render(data) {
+        setText('starCount', data.stars ?? 0);
+        setText('statWatchers', data.watchers ?? 0);
+        setText('statForks', data.forks ?? 0);
+        setText('statIssues', data.issues ?? 0);
+        setText('statBranch', data.branch ?? 'main');
+        setText('statUpdated', data.updated ?? '—');
+
+        if (data.version) setText('versionText', data.version);
+        setText('releasesText', data.releases ?? 0);
+
+        if (data.sha) setText('commitSha', data.sha);
+
+        repoStats.classList.add('is-visible');
+        apiStatus.classList.add('is-hidden');
+        apiStatus.textContent = '';
+      }
+
+      function readCache() {
+        try {
+          const raw = localStorage.getItem(CACHE_KEY);
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed.ts !== 'number') return null;
+          if (Date.now() - parsed.ts > CACHE_TTL) return null;
+          return parsed.data;
+        } catch {
+          return null;
+        }
+      }
+
+      function writeCache(data) {
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+        } catch {}
+      }
+
+      function showFallback(message) {
+        apiStatus.classList.remove('is-hidden');
+        apiStatus.classList.add('is-error');
+        apiStatus.innerHTML = '';
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-exclamation-triangle';
+        icon.setAttribute('aria-hidden', 'true');
+        apiStatus.append(icon, ' ' + message);
+      }
+
+      const cached = readCache();
+      if (cached) render(cached);
+
+      const apiUrl = `https://api.github.com/repos/${repo}`;
+      const releasesUrl = `https://api.github.com/repos/${repo}/releases?per_page=100`;
+      const commitsUrl = `https://api.github.com/repos/${repo}/commits?per_page=1`;
+
+      Promise.all([
+        fetch(apiUrl, { headers }).then(r => r.ok ? r.json() : Promise.reject(new Error('repo'))),
+        fetch(releasesUrl, { headers }).then(r => r.ok ? r.json() : Promise.reject(new Error('releases'))),
+        fetch(commitsUrl, { headers }).then(r => r.ok ? r.json() : Promise.reject(new Error('commits')))
+      ])
+        .then(([repoData, releasesData, commitsData]) => {
+          const data = {
+            stars: repoData.stargazers_count ?? 0,
+            watchers: repoData.subscribers_count ?? repoData.watchers_count ?? 0,
+            forks: repoData.forks_count ?? 0,
+            issues: repoData.open_issues_count ?? 0,
+            branch: repoData.default_branch ?? 'main',
+            updated: repoData.updated_at ? formatRelativeDate(repoData.updated_at) : '—',
+            version: null,
+            releases: 0,
+            sha: null
+          };
+
+          if (Array.isArray(releasesData) && releasesData.length > 0) {
+            const latest = releasesData[0];
+            data.version = typeof latest.tag_name === 'string' ? latest.tag_name : null;
+            data.releases = releasesData.length === 100 ? '100+' : releasesData.length;
+          }
+
+          if (Array.isArray(commitsData) && commitsData[0]?.sha) {
+            data.sha = commitsData[0].sha.slice(0, 7);
+          }
+
+          writeCache(data);
+          render(data);
+        })
+        .catch((err) => {
+          console.warn('[GitHub API]', err.message);
+          if (cached) {
+            showFallback('Live stats unavailable — showing cached data.');
+          } else {
+            showFallback('Live stats unavailable (API rate limit or network).');
+          }
+        });
+    })();
+  </script>
+</body>
+</html>
