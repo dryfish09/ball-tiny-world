@@ -1,2 +1,7 @@
-
+* text=auto eol=lf
+*.sh text eol=lf
+*.png binary
+*.wav binary
+*.ogg binary
+*.zip binary
 *.html linguist-documentation=true
