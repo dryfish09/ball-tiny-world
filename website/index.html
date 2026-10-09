@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Primary -->
   <title>Ball's 2D World · official</title>
   <meta name="description" content="Ball's 2D World – a tiny yellow ball in a tiny green world. Free C++/Raylib game. Download for Linux, macOS, Windows.">
   <meta name="theme-color" content="#1a3d2e">
   <link rel="canonical" href="https://dryfish09.github.io/ball-tiny-world/">
 
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Ball's 2D World">
   <meta property="og:title" content="Ball's 2D World">
@@ -17,15 +19,18 @@
   <meta property="og:image" content="https://raw.githubusercontent.com/dryfish09/ball-tiny-world/main/preview.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ball's 2D World – a tiny yellow ball in a tiny green world">
 
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Ball's 2D World">
   <meta name="twitter:description" content="Tiny yellow ball. Tiny green world. Free C++/Raylib game.">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/dryfish09/ball-tiny-world/main/preview.png">
 
+  <!-- Favicon (inline SVG emoji) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🟡</text></svg>">
 
-  <!-- Font pixel -->
+  <!-- Pixel fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -51,13 +56,13 @@
     }
 
     body {
-      /* Nền cỏ pixel: gradient + pattern grid mờ */
       background-color: var(--grass-dark);
+      /* Noise texture cực nhẹ thay cho scanline — không gây mỏi mắt, không moiré */
       background-image:
-        /* Lớp scanline pixel */
-        repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px),
-        /* Lớp cỏ sáng dần từ trên xuống */
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
         linear-gradient(180deg, #2d5a3f 0%, #1a3d2e 100%);
+      background-size: 200px 200px, 100% 100%;
+      background-attachment: fixed, fixed;
       font-family: 'VT323', 'Courier New', monospace;
       font-size: 18px;
       color: var(--cream);
@@ -74,11 +79,9 @@
       max-width: 1000px;
       width: 100%;
       background: rgba(26, 61, 46, 0.92);
-      /* Border pixel: dashed 4px thay vì mượt */
       border: 4px dashed var(--gold);
       border-radius: 12px;
       padding: 2.5rem 2.8rem;
-      /* Shadow pixel offset cứng, không blur */
       box-shadow:
         8px 8px 0 rgba(0, 0, 0, 0.5),
         inset 0 0 0 2px rgba(255, 217, 61, 0.15);
@@ -96,7 +99,6 @@
     .ball-icon {
       font-size: 3.5rem;
       line-height: 1;
-      /* Animation nhún nhẹ kiểu game */
       animation: bob 1.2s steps(2, end) infinite;
       filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.5));
     }
@@ -113,12 +115,11 @@
       line-height: 1.3;
       letter-spacing: 1px;
       color: var(--gold);
-      /* Outline pixel: 4 shadow offset không blur */
+      /* Outline pixel: 3 shadow offset không blur */
       text-shadow:
         3px 3px 0 var(--gold-shadow),
         3px 0 0 var(--gold-shadow),
         0 3px 0 var(--gold-shadow);
-      /* Bỏ gradient mờ */
       -webkit-text-fill-color: var(--gold);
     }
 
@@ -191,7 +192,6 @@
       text-decoration: none;
       background: var(--grass-light);
       color: var(--cream);
-      /* Shadow pixel cứng */
       box-shadow: 5px 5px 0 #0d1f17;
       text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
     }
@@ -218,7 +218,6 @@
       box-shadow: 7px 7px 0 #0d1f17;
     }
 
-    /* Nhấn xuống: dồn shadow vào */
     .btn:active {
       transform: translate(5px, 5px);
       box-shadow: 0 0 0 #0d1f17;
@@ -314,7 +313,6 @@
     }
 
     .platform-row .p-text strong {
-      font-size: 1.15rem;
       color: var(--gold);
       font-family: 'Press Start 2P', monospace;
       font-size: 0.8rem;
@@ -502,6 +500,7 @@
 </head>
 <body>
   <div class="game-card">
+    <!-- Header -->
     <div class="logo-section">
       <div class="ball-icon" aria-hidden="true">🟡</div>
       <div class="logo-text">
@@ -510,6 +509,7 @@
       </div>
     </div>
 
+    <!-- Badges -->
     <div class="badge-row" id="badgeRow">
       <span class="badge"><i class="fas fa-balance-scale" aria-hidden="true"></i> GPL-3.0</span>
       <span class="badge"><i class="fas fa-code" aria-hidden="true"></i> C++ / Raylib</span>
@@ -519,6 +519,7 @@
       <span class="badge"><i class="fas fa-code-branch" aria-hidden="true"></i> <span id="commitSha">—</span></span>
     </div>
 
+    <!-- CTA -->
     <div class="cta-row">
       <a href="https://github.com/dryfish09/ball-tiny-world/releases" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
         <i class="fas fa-download" aria-hidden="true"></i> DOWNLOAD
@@ -531,10 +532,12 @@
       </a>
     </div>
 
+    <!-- API status -->
     <div class="api-status" id="apiStatus" role="status" aria-live="polite">
       <i class="fas fa-sync-alt fa-spin" aria-hidden="true"></i> Loading live stats from GitHub API...
     </div>
 
+    <!-- Repo stats -->
     <div class="repo-stats" id="repoStats">
       <span><i class="fas fa-code-branch" aria-hidden="true"></i> <span id="statBranch">main</span></span>
       <span><i class="fas fa-eye" aria-hidden="true"></i> <span id="statWatchers">0</span> watchers</span>
@@ -543,6 +546,7 @@
       <span><i class="fas fa-history" aria-hidden="true"></i> updated <span id="statUpdated">—</span></span>
     </div>
 
+    <!-- What's inside -->
     <h2 class="section-title">
       <i class="fas fa-circle-info" aria-hidden="true"></i> WHAT'S INSIDE?
     </h2>
@@ -561,6 +565,7 @@
       </li>
     </ul>
 
+    <!-- How to run -->
     <h2 class="section-title">
       <i class="fas fa-terminal" aria-hidden="true"></i> HOW TO RUN
     </h2>
@@ -589,6 +594,7 @@
       </div>
     </div>
 
+    <!-- Roadmap -->
     <h2 class="section-title" style="margin-top:2.2rem;">
       <i class="fas fa-list-check" aria-hidden="true"></i> ROADMAP
     </h2>
@@ -603,11 +609,13 @@
       <li><i class="fas fa-circle-xmark" aria-hidden="true"></i> delete repo (canceled)</li>
     </ul>
 
+    <!-- Official notice -->
     <div class="warning-note" role="note">
       <i class="fas fa-shield-halved" aria-hidden="true"></i>
       <span><strong>OFFICIAL NOTICE:</strong> This game is only uploaded and developed on the <a href="https://github.com/dryfish09/ball-tiny-world" target="_blank" rel="noopener noreferrer" style="color:#ffd93d;">GitHub repository</a> and <a href="https://dryfish09.itch.io/ball-tiny-world" target="_blank" rel="noopener noreferrer" style="color:#ffd93d;">itch.io page</a>. Other sources are unofficial. Downloading from unofficial sources puts you at risk.</span>
     </div>
 
+    <!-- Footer -->
     <footer class="credit-footer">
       <div>
         <i class="fas fa-fish" aria-hidden="true"></i> Made with 🐟 by <a href="https://github.com/dryfish09" target="_blank" rel="noopener noreferrer">dryfish09</a> – thanks to RayLib and all asset authors
@@ -631,7 +639,7 @@
 
       const repo = 'dryfish09/ball-tiny-world';
       const CACHE_KEY = 'ballworld_gh_stats_v1';
-      const CACHE_TTL = 10 * 60 * 1000;
+      const CACHE_TTL = 10 * 60 * 1000; // 10 phút
 
       const apiStatus = document.getElementById('apiStatus');
       const repoStats = document.getElementById('repoStats');
