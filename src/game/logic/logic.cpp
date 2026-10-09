@@ -5,7 +5,7 @@
 #include "game/texture/texture.h"
 #include "game/spawn/flower/flower_spawner.h"
 #include "game/spawn/player/ball_spawner.h"
-#include "game/spawn/chest/chest.h"
+#include "game/spawn/chest/chest_spawner.h"
 #include "logic.h"
 // global stuff
 float dt;
