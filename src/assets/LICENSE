@@ -1,1 +1,19 @@
-idk. Contact its author.
+ASSET LICENSE
+=============
+
+The assets in this directory (textures and sounds) were downloaded 
+from the internet. The original authors are unknown.
+
+If you are the author of any asset in this directory, please contact:
+- GitHub Issues: https://github.com/dryfish09/ball-tiny-world/issues
+- Email: dryfish009@gmail.com
+
+You may request:
+- Attribution (credit in CREDITS.md)
+- Removal of your asset
+
+Until the original license is clarified, these assets are provided 
+"AS IS" without any warranty. Redistribution is not guaranteed to 
+be permitted by the original authors.
+
+For the source code license, see ../../LICENSE (GPL-3.0).
