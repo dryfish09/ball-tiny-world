@@ -7,7 +7,10 @@
 #include "game/spawn/player/ball_spawner.h"
 #include "game/spawn/chest/chest.h"
 #include "logic.h"
+#include <string>
 // global stuff
+Font font;
+font = LoadFont("src/assets/font/font.ttf");
 float dt;
 int trapped = GetRandomValue(0, 1);
 int score = 0;
@@ -16,6 +19,10 @@ bool chestOpened = false;
 float spawnTimer = 3.0f;
 float spawnCooldown = 0;
 int highScore = 0;
+void DrawTextF(const std::string text, int x, int y, int size, Color color) {
+ DrawTextEx(font, text, (Vector2){static_cast<float>(x), static_cast<float>(y)},
+   static_cast<float>(size), 1, color);
+}
 void insertLogic() {
     spawn::spawnBall();
     spawn::spawnFlower();
@@ -101,6 +108,7 @@ void insertLogic() {
         }
         draw();
     }
+    UnloadFont(font);
 }
 void draw() {
     BeginDrawing();
@@ -136,8 +144,9 @@ void draw() {
         scoreAdded = false;
         drawChest();
     }
-    DrawText("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
-    DrawText(TextFormat("Score: %i", score), 20, 50, 20, BLACK);
-    DrawText(TextFormat("High score: %i", highScore), 20, 80, 20, BLACK);
+    DrawTextF("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
+    DrawTextF(TextFormat("Score: %i", score), 20, 50, 20, BLACK);
+    DrawTextF(TextFormat("High score: %i", highScore), 20, 80, 20, BLACK);
     EndDrawing();
 }
+
