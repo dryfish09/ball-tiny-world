@@ -1,4 +1,3 @@
-
 #include "raylib.h"
 #include "game/var.h"
 #include "game/sound/sound.h"
@@ -7,7 +6,9 @@
 #include "game/spawn/player/ball_spawner.h"
 #include "game/spawn/chest/chest_spawner.h"
 #include "logic.h"
-// global stuff
+#include <string>
+
+Font font;
 float dt;
 int trapped = GetRandomValue(0, 1);
 int score = 0;
@@ -16,24 +17,34 @@ bool chestOpened = false;
 float spawnTimer = 3.0f;
 float spawnCooldown = 0;
 int highScore = 0;
+
+void DrawTextF(const std::string text, int x, int y, int size, Color color) {
+    DrawTextEx(font, text.c_str(),
+        (Vector2){ static_cast<float>(x), static_cast<float>(y) },
+        static_cast<float>(size), 1.0f, color);
+}
+
 void insertLogic() {
+    font = LoadFont("src/assets/font/font.ttf");
+
     spawn::spawnBall();
     spawn::spawnFlower();
     spawnChest();
-    // speed: 
+
     float speed = 300.5f;
     float runSpeed = 240.5f;
     float dashSpeed = 360.0f;
-    // play background music 
+
     sound::playBgm();
+
     while (!WindowShouldClose()) {
         dt = GetFrameTime();
         UpdateMusicStream(sound::bgm);
-        // check is bgm are playing and replay it
+
         if (!IsMusicStreamPlaying(sound::bgm)) {
             sound::playBgm();
         }
-        // player will move slower when player hold to move
+
         if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
             spawn::ballPos.x += runSpeed * dt;
             sound::playRunSound();
@@ -50,10 +61,9 @@ void insertLogic() {
             spawn::ballPos.y -= runSpeed * dt;
             sound::playRunSound();
         }
-        // move ball with arrows and W, A, S, D
+
         if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
             spawn::ballPos.x += speed * dt;
-            // play sound
             sound::playFootstepSound();
         }
         else if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)) {
@@ -68,8 +78,6 @@ void insertLogic() {
             spawn::ballPos.y -= speed * dt;
             sound::playFootstepSound();
         }
-        
-        // easter egg for who knows some code
         else if (IsKeyDown(KEY_X) && IsKeyDown(KEY_LEFT_SHIFT)) {
             spawn::ballPos.x -= dashSpeed * dt;
         }
@@ -82,11 +90,14 @@ void insertLogic() {
         else if (IsKeyDown(KEY_X)) {
             spawn::ballPos.x += dashSpeed * dt;
         }
-        if (IsKeyPressed(KEY_E) && (spawn::ballPos.x - chestPos.x) * (spawn::ballPos.x - chestPos.x) + (spawn::ballPos.y - chestPos.y) * (spawn::ballPos.y - chestPos.y) < 2500) {
+
+        if (IsKeyPressed(KEY_E) &&
+            (spawn::ballPos.x - chestPos.x) * (spawn::ballPos.x - chestPos.x) +
+            (spawn::ballPos.y - chestPos.y) * (spawn::ballPos.y - chestPos.y) < 2500) {
             chestOpened = true;
             spawnCooldown = spawnTimer;
         }
-        // prevent player go out of screen
+
         if (spawn::ballPos.x - spawn::ballRadius <= 0) {
             spawn::ballPos.x = spawn::ballRadius;
         }
@@ -99,15 +110,19 @@ void insertLogic() {
         if (spawn::ballPos.y + spawn::ballRadius >= windowY) {
             spawn::ballPos.y = windowY - spawn::ballRadius;
         }
+
         draw();
     }
+
+    UnloadFont(font);
 }
+
 void draw() {
     BeginDrawing();
     ClearBackground(GREEN);
-    // draw background
+
     texture::drawBackground(texture::bg);
-    // draw some circle
+
     DrawTextureV(texture::ball, spawn::ballPos, WHITE);
     DrawTextureV(texture::flowerTexture, spawn::flowerPos, WHITE);
     DrawTextureV(texture::flowerTexture, spawn::flowerPos2, WHITE);
@@ -115,10 +130,12 @@ void draw() {
     DrawTextureV(texture::flowerTexture, spawn::flowerPos4, WHITE);
     DrawTextureV(texture::flowerTexture, spawn::flowerPos5, WHITE);
     DrawTextureV(texture::flowerTexture, spawn::flowerPos6, WHITE);
+
     if (chestOpened) {
         trapped = GetRandomValue(0, 1);
         drawOpenedChest();
         spawnCooldown -= dt;
+
         if (spawnCooldown <= 0 && !scoreAdded && trapped == 0) {
             spawnCooldown = 0;
             chestOpened = false;
@@ -136,8 +153,10 @@ void draw() {
         scoreAdded = false;
         drawChest();
     }
-    DrawText("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
-    DrawText(TextFormat("Score: %i", score), 20, 50, 20, BLACK);
-    DrawText(TextFormat("High score: %i", highScore), 20, 80, 20, BLACK);
+
+    DrawTextF("Use arrow keys or WASD to move!", 20, 20, 20, BLACK);
+    DrawTextF(TextFormat("Score: %i", score), 20, 50, 20, BLACK);
+    DrawTextF(TextFormat("High score: %i", highScore), 20, 80, 20, BLACK);
+
     EndDrawing();
 }
