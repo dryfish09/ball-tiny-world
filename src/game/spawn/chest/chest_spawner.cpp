@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "chest.h"
+#include "chest_spawner.h"
 #include "game/var.h"
 #include "game/texture/texture.h"
 Vector2 chestPos = {0, 0};
