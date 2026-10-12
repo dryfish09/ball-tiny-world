@@ -55,3 +55,12 @@ endif()
 if(UNIX AND NOT APPLE)
     target_link_libraries(game PRIVATE m pthread dl)
 endif()
+
+# --- Windows CLANG64: static link runtime so no libc++/libgcc DLLs are needed ---
+if(MINGW AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_link_options(game PRIVATE
+        -static
+        -static-libgcc
+        -static-libstdc++
+    )
+endif()
