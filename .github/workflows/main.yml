@@ -24,6 +24,7 @@ concurrency:
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
   prep:
@@ -360,16 +361,26 @@ jobs:
           git tag "${{ needs.prep.outputs.tag }}"
           git push origin "${{ needs.prep.outputs.tag }}"
 
+      - name: Generate release notes
+        id: notes
+        uses: dryfish09/release-note@v1
+        with:
+          repo_name: ${{ github.event.repository.name }}
+          repo_owner: ${{ github.repository_owner }}
+          gh_tag: ${{ needs.prep.outputs.tag }}
+          accept_invalid_commit: 'true'
+
       - name: Create GitHub release
         uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.prep.outputs.tag }}
           name: ${{ needs.prep.outputs.title }}
+          body: ${{ steps.notes.outputs.release_body }}
           files: |
             ball-tiny-world-v${{ needs.prep.outputs.version }}-linux.tar.gz
             ball-tiny-world-v${{ needs.prep.outputs.version }}-macos.zip
             ball-tiny-world-v${{ needs.prep.outputs.version }}-windows.zip
-          generate_release_notes: true
+          generate_release_notes: false
 
       - name: Upload to itch.io (Linux)
         uses: yeslayla/butler-publish-itchio-action@master
