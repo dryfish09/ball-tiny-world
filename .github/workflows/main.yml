@@ -294,9 +294,7 @@ jobs:
             -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH=/c/raylib-install \
-            -DCMAKE_EXE_LINKER_FLAGS="-static-libc++ -static-libgcc -static-libstdc++ -static -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic" \
-            -DCMAKE_SHARED_LINKER_FLAGS="-static-libc++ -static-libgcc -static-libstdc++ -static -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic"
+            -DCMAKE_PREFIX_PATH=/c/raylib-install
           cmake --build build
           cp build/game.exe ballTinyWorld-windows.exe
           echo "=== build done ==="
