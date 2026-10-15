@@ -143,7 +143,7 @@ void draw() {
             scoreAdded = true;
             spawnChest();
         }
-        if (highScore >= score) {
+        if (highScore < score) {
             highScore = score;
         }
         if (trapped == 1) {
