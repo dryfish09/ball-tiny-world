@@ -10,7 +10,7 @@ int main() {
     SetTargetFPS(60);
     // call logic
     insertLogic();
-    // unload and close devicee lik3bsound,windows,etc.
+    // unload and close device sound,window,etc.
     unloadAndClose();
     return 0;
 }
